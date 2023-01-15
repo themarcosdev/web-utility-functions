@@ -6,8 +6,8 @@
      * @param {string} copiarParaTransferencia Define se área de transferência de cópias (Control+C) deve receber o valor da cor em hex : 'S' || 'N' ;
      * 
      * @example
-     * * pegaCoresEyeDropper('alerta');
-     * * pegaCoresEyeDropper('console');
+     * * pegaCoresEyeDropper('alerta','n');
+     * * pegaCoresEyeDropper('console','s');
      */
     function pegaCoresEyeDropper(formaDeRetorno, copiarParaTransferencia){
         /* Arrays para Validações */
@@ -15,12 +15,9 @@
         let opcoesDeCopia = ['s','n'];
 
         /* Validações */
-        /* Validando strings para minúsculo */
-        formaDeRetorno = formaDeRetorno.toLocaleLowerCase();
-        copiarParaTransferencia = copiarParaTransferencia.toLocaleLowerCase();
 
         /* Validando formaDeRetorno */
-        if(!opcoesDeRetorno.includes(formaDeRetorno)){
+        if(!opcoesDeRetorno.toLocaleLowerCase().includes(formaDeRetorno)){
             formaDeRetorno = null;
         }
 
@@ -29,7 +26,7 @@
         }
 
         /* Validando copiarParaTransferencia */
-        if(!opcoesDeCopia.includes(copiarParaTransferencia)){
+        if(!opcoesDeCopia.toLocaleLowerCase().includes(copiarParaTransferencia)){
             copiarParaTransferencia = null;
         }
 
