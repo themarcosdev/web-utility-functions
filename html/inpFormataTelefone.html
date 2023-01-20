@@ -1,0 +1,22 @@
+  <!-- Exemplo básico de input no HTML   -->
+  <form action="#" method="POST">
+    <input type="tel" name="teste" id="inpTesteTelefone" maxlength="14" placeholder="(11) 11111-1111" pattern="[(]{1}[1-9]{1}[0-9]{1}[)]{1} [0-9]{4,5}-[0-9]{4}" value="" class="form-control">
+    <button>TESTE</button>
+  </form>
+  <script>
+    /*Formatação -  Validação do telefone  */
+    function validaTelef(inpId) {
+      document.getElementById(inpId).addEventListener("keyup", function (e) {
+        let codigoTecla = this.keyCode || this.which;
+            // backspace = 8  <- (apagar)
+        if (codigoTecla != 8) {
+          let x = e.target.value.replace(/\D/g, "").match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+          x[1] = x[1].replace(/^0+/, '');
+          e.target.value = !x[2] ? x[1] : "(" + x[1] + ")" + x[2] + (x[3] ? "-" + x[3] : "");
+        }
+      })
+    }
+
+    validaTelef("inpTesteTelefone");
+
+  </script>
