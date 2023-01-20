@@ -14,8 +14,7 @@
           return 'Informe o item que será retornado no array' ;
       }
 
-      const tamanhoArray = tamanho;
-      const arrayPreenchido = Array(tamanhoArray).fill(item);
+      const arrayPreenchido = Array(tamanho).fill(item);
 
       return arrayPreenchido;
 
