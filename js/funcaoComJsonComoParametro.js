@@ -8,12 +8,10 @@
      * recebeJson(json) ;
      * recebeJson(json2) ;
   */
-  function recebeJson(paramsViaJson){
-        if(!paramsViaJson){
+  function recebeJson(params){
+        if(!params){
             return 'informe os parâmetros para essa função';
         }
-
-        params = paramsViaJson;
 
         if(!params.param1){
             return 'informe o parâmetro param1';
