@@ -121,11 +121,11 @@
 
             /* Escrendo no titulo da progress bar */
             if(tempoEmSegundos <= 60){
-              barra_de_progresso.title = 'Tempo passado: ' + (tempoAgora / tempo) * tempo / 1000 + ' segundos - restante : ' + formataTamanho(100 - tempoAgora / tempo * 100, 5 )  + ' % !';
+              barra_de_progresso.title = 'Tempo passado: ' + (tempoAgora / tempo) * tempo / 1000 + ' segundos - restante : ' + formataTamanhoStringOuNum(100 - tempoAgora / tempo * 100, 5 )  + ' % !';
             } else {
               tempoTotal = tempoAgora / 1000 ;
               tempoEmMin = (tempoTotal / 60).toString().split('.')[0] + ' min e ' + (tempoTotal % 60) + ' segundos';
-              barra_de_progresso.title = 'Tempo passado: ' + tempoEmMin + ' - restante : ' + formataTamanho(100 - tempoAgora / tempo * 100 , 5 )+ ' % !';
+              barra_de_progresso.title = 'Tempo passado: ' + tempoEmMin + ' - restante : ' + formataTamanhoStringOuNum(100 - tempoAgora / tempo * 100 , 5 )+ ' % !';
             }
 
           }, 1000);
