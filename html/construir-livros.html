@@ -4,7 +4,7 @@
 		<meta charset="UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Construtor de Livros</title>
+		<title>📖 Construtor de Livros</title>
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
 			integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
@@ -19,16 +19,24 @@
 		<div class="container">
 			<div class="container-fluid">
 				<!-- inicio -->
-				<div class="c-livro mx-5 my-5">
+				<div class="container-livro mx-5 my-5">
 					<div class="row">
-						<div id="paginas" class="mx-auto col-6">
+						<div id="paginas" class="mx-auto col-12">
 							<!-- páginas do livro aqui dentro -->
 						</div>
 					</div>
+					<div class="row mt-3">
+						<div class="text-center controls1 my-3">
+							<button id="setaEsquerda" class="bg-primary text-white me-5"><i class="fa-solid fa-chevron-left"></i></button>
+							<button id="setaDireita" class="bg-primary text-white ms-5"><i class="fa-solid fa-chevron-right"></i></button>
+						</div>
+					</div>
 					<div class="row">
-						<div class="text-center controls ">
-							<button id="setaEsquerda"><i class="fa-solid fa-chevron-left"></i></button>
-							<button id="setaDireita"><i class="fa-solid fa-chevron-right"></i></button>
+						<div class="controls2 my-3 justify-content-center">
+							<div class="form-floating">
+								<!-- <label for="inpIrParaPag" class="py-3">Ir para página</label> -->
+								<input type="number" id="inpIrParaPag" class="form-control py-3 fw-bold w-25 mx-auto" min="1" value="1" oldvalue="1" onfocus="this.oldvalue = this.value">
+							</div>
 						</div>
 					</div>
 				</div>
@@ -39,33 +47,83 @@
 </html>
 <script>
 	/** Função para construir um livro html */
-	function construirLivrosHTML(arrayDeDivs) {
-		var indiceAtual = 0;
+	function construirLivrosHTML(arrayDeDivs,configs) {
+		let indiceAtual = 0;
+		let numPaginas = arrayDeDivs.length;
 
-		function exibirPaginas() {
-			var paginas = "";
-			var numPaginas = arrayDeDivs.length;
+		if(!arrayDeDivs){
+			return 'Informe as páginas';
+		}
 
+		if(!configs){
+			return 'Informe as configs';
+		}
+
+		if(configs.exibir_nro_pags == 'S'){
+			for(let i = 0 ; i < arrayDeDivs.length ; i ++){
+				let conteudo = arrayDeDivs[i].split('>')[1].split("<")[0];
+				let conteudo_pag = conteudo + ` <div class='divNroPag'>Pág:${(i+1)}</div> ` ;
+				arrayDeDivs[i] = arrayDeDivs[i].replace(conteudo,conteudo_pag);
+			}
+			console.log(arrayDeDivs);
+		}
+
+		function exibirPaginas(configs) {
+			let paginas = "";
+			let paginaSozinha = "N";
+
+			// Primeira página ; 
 			if (indiceAtual == 0) {
-				paginas = arrayDeDivs[0];
+				if(configs.exibir_capa == 'S'){
+					paginas = arrayDeDivs[0] ;
+					paginaSozinha = 'S';
+				} else {
+					paginas = arrayDeDivs[0] + arrayDeDivs[1];
+					paginaSozinha = 'N';
+				}
+				document.getElementById("setaEsquerda").toggleAttribute("disabled",true);
 			} else if (indiceAtual == numPaginas - 1) {
+				// Última página ; 
 				paginas = arrayDeDivs[numPaginas - 1];
+				document.getElementById("setaDireita").toggleAttribute("disabled",true);
+				paginaSozinha = 'S';
 			} else {
-				paginas = arrayDeDivs[indiceAtual] + arrayDeDivs[indiceAtual + 1];
+				// Demais páginas (excluindo primeira e última) ;
+				if(configs.exibir_pag_unica == 'S'){
+					paginaSozinha = 'S';
+					paginas = arrayDeDivs[indiceAtual] ;
+				} else { 
+					paginaSozinha = 'N';
+					paginas = arrayDeDivs[indiceAtual] + arrayDeDivs[indiceAtual + 1];
+				}
+
+				document.getElementById("setaEsquerda").toggleAttribute("disabled",false);
+				document.getElementById("setaDireita").toggleAttribute("disabled",false);
+			}
+			
+			/* Definindo modo de exibição se é single-page ou 2 páginas */
+			if(paginaSozinha == "S"){
+				document.getElementById("paginas").classList.add("col-6");
+				document.getElementById("paginas").classList.remove("col-12");
+			} else {
+				document.getElementById("paginas").classList.remove("col-6");
+				document.getElementById("paginas").classList.add("col-12");
 			}
 
 			document.getElementById("paginas").classList.add("d-flex");
 			document.getElementById("paginas").innerHTML = paginas;
 		}
 
-		exibirPaginas();
+		exibirPaginas(configs);
 
+		/*Ir para esquerda */
 		document.getElementById("setaEsquerda").addEventListener("click", function () {
 			if (indiceAtual > 0) {
 				indiceAtual -= 1;
 				document.getElementById("paginas").firstChild.classList.add("girarDireita");
+				document.getElementById("inpIrParaPag").value  = +document.getElementById("inpIrParaPag").value - 1; 
 				setTimeout(function () {
-					exibirPaginas();
+					exibirPaginas(configs);
 					if(indiceAtual > 1){
 						document.getElementById("paginas").firstChild.classList.remove("girarDireita");
 					} else if(indiceAtual == 1) { 
@@ -75,46 +133,111 @@
 			}
 		});
 
+		/*Ir para direita */
 		document.getElementById("setaDireita").addEventListener("click", function () {
 			if (indiceAtual < arrayDeDivs.length - 1) {
 				indiceAtual += 1;
 				document.getElementById("paginas").lastChild.classList.add("girarEsquerda");
+				document.getElementById("inpIrParaPag").value = +document.getElementById("inpIrParaPag").value + 1;
 				setTimeout(function () {
-					exibirPaginas();
+					exibirPaginas(configs);
 					document.getElementById("paginas").lastChild.classList.remove("girarEsquerda");
 				}, 1250);
+			}
+		});
+
+		/*Ir para página diretamente */
+		document.getElementById("inpIrParaPag").addEventListener("change",()=>{
+			
+			document.getElementById("inpIrParaPag").max = numPaginas ;
+			indiceAtual = document.getElementById("inpIrParaPag").value - 1 ;
+			let oldValue = document.getElementById("inpIrParaPag").oldvalue ;
+
+			if(indiceAtual <= numPaginas - 1 && indiceAtual >= 0){
+				// exibirPaginas(configs);
+				if(oldValue < indiceAtual){
+					document.getElementById("paginas").firstChild.classList.add("girarDireita");
+					setTimeout(function () {
+						exibirPaginas(configs);
+						if(indiceAtual > 1){
+							document.getElementById("paginas").firstChild.classList.remove("girarDireita");
+						} else if(indiceAtual == 1) { 
+							document.getElementById("paginas").lastChild.classList.remove("girarEsquerda");
+						}
+					}, 1250);
+				} else { 
+					document.getElementById("paginas").lastChild.classList.add("girarEsquerda");
+					setTimeout(function () {
+						exibirPaginas(configs);
+						document.getElementById("paginas").lastChild.classList.remove("girarEsquerda");
+					}, 1250);
+				}
+			} else {
+				console.log('Página inexistente');
+			}
+
+			// document.getElementById("inpIrParaPag").oldvalue = document.getElementById("inpIrParaPag").value;
+		});
+
+		/* Habilitar click nas setas */
+		document.addEventListener('keyup', function(event) {
+			if (event.code === 'ArrowRight') {
+				document.getElementById('setaDireita').click();
+			} else if (event.code === 'ArrowLeft') {
+				document.getElementById('setaEsquerda').click();
 			}
 		});
 	}
 
 	/** Array  de páginas */
 	const arrayDeDivs = [
-		"<div class='page' style='background-color: darkblue; width: 300px; height: 400px; text-align: center;'>Página 1</div>",
-		"<div class='page' style='background-color: blue; width: 300px; height: 400px; text-align: center;'>Página 2</div>",
-		"<div class='page' style='background-color: green; width: 300px; height: 400px; text-align: center;'>Página 3</div>",
-		"<div class='page' style='background-color: yellow; width: 300px; height: 400px; text-align: center;'>Página 4</div>",
-		"<div class='page' style='background-color: pink; width: 300px; height: 400px; text-align: center;'>Página 5</div>",
-		"<div class='page' style='background-color: purple; width: 300px; height: 400px; text-align: center;'>Página 6</div>",
-		"<div class='page' style='background-color: orange; width: 300px; height: 400px; text-align: center;'>Página 7</div>"
+		"<div class='page text-white' style='background-color: darkblue; width: 50vw; height: 70vh; text-align: center;'>Página 1  </div>",
+		"<div class='page text-white' style='background-color: blue; width: 50vw; height: 70vh; text-align: center;'>Página 2 </div>",
+		"<div class='page text-white' style='background-color: green; width: 50vw; height: 70vh; text-align: center;'>Página 3 </div>",
+		"<div class='page text-white' style='background-color: yellow; width: 50vw; height: 70vh; text-align: center;'>Página 4  </div>",
+		"<div class='page text-white' style='background-color: pink; width: 50vw; height: 70vh; text-align: center;'>Página 5 </div>",
+		"<div class='page text-white' style='background-color: purple; width: 50vw; height: 70vh; text-align: center;'>Página 6 </div>",
+		"<div class='page text-white' style='background-color: orange; width: 50vw; height: 70vh; text-align: center;'>Página 7 </div>",
+		"<div class='page text-white' style='background-color: gray; width: 50vw; height: 70vh; text-align: center;'>Página 8 </div>"
 	];
 	
-	construirLivrosHTML(arrayDeDivs);
+	let configs = {exibir_capa : 'S', exibir_nro_pags : 'S', exibir_pag_unica : 'N'} ;
+
+	window.addEventListener("DOMContentLoaded",()=>{
+		construirLivrosHTML(arrayDeDivs,configs);
+	});
 
 </script>
 <style>
+	.container-livro {
+		perspective: 1000px;
+	}
+
 	.girarDireita {
 		transform-style: preserve-3d;
-		transition: transform 2s;
-		/* animation: virarDireita 2s; */
+		transition: transform 2s ease-in-out;
+		/* animation: virarDireita 3s; */
 		transform: translateX(100%) rotateY(180deg);
+		/* backface-visibility: hidden; */
+		/* perspective : 6000px; */
+		box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+		animation: esconderTraseiraPagina 2.3s ease-in-out;
+		transform-origin: top right 0.3vw;
+		/* border-bottom-left-radius: 250px 100px; */
 		
 	}
 
 	.girarEsquerda {
 		transform-style: preserve-3d;
-		transition: transform 2s;
+		transition: transform 2s ease-in-out;
 		/* animation: virarEsquerda 3s; */
 		transform: translateX(-100%) rotateY(-180deg);
+		/* backface-visibility: hidden; */
+		/* perspective : 6000px; */
+		box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+		animation: esconderTraseiraPagina 2.3s ease-in-out;
+		transform-origin: top left 0.3vw;
+		/* border-bottom-right-radius: 250px 100px; */
 		
 	}
 
@@ -135,5 +258,22 @@
 			transform: rotateY(-135deg);
 		}
 	} */
+
+	@keyframes esconderTraseiraPagina {
+		to {
+			backface-visibility: hidden;
+		}
+	}
+
+	.divNroPag {
+        /* width: 30px;
+        height: 20px; */
+        background-color: red;
+        position: absolute;
+        /* bottom: 12px; */
+        /* right: 13px; */
+        /* color: white; */
+        text-align: center;
+    }
 
 </style>
