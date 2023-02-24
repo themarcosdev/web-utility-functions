@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>TUTORIAL</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js" integrity="sha512-2rNj2KJ+D8s1ceNasTIex6z4HWyOnEYLVC3FigGOmyQCZc2eBXKgOxQmo3oKLHyfcj53uz4QMsRCWNbLd32Q1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+			integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
+	</script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+		integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js"></script>
+</head>
+<body>
+	<div class="container">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-12 text-center">
+					<h4>Teste tutorial</h4>
+					<input name="ex_nome" id="ex_nome" placeholder="exemplo de nome" class="form-control w-50 my-2">
+					<input name="ex_email" id="ex_email" placeholder="exemplo de email" class="form-control w-50 my-2">
+					<input name="ex_telefone" id="ex_telefone" placeholder="exemplo de telefone" class="form-control w-50 my-2">
+					<input name="ex_endere&ccedil;o" id="ex_endereco" placeholder="exemplo de endere&ccedil;o" class="form-control w-50 my-2">
+					<button class="btn bg-primary text-white" data-toggle="tooltip" data-html="true" title="Bot&atilde;o de confirma&ccedil;&atilde;o">OK</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+<script>
+	// Habilitando tooltip ;
+	$(function () {
+		$('[data-toggle="tooltip"]').tooltip('show')
+	});
+
+	function gerarTutorial(elementosDoTutorial){
+		if(!elementosDoTutorial){
+			console.log('Informe um array de items do DOM para serem usados no tutorial');
+		}
+
+		// Criando arquivos HTML e CSS e os adicionando ;
+		// Criando HTML ; 
+		const DIV_CORTINA = document.createElement("div");
+		DIV_CORTINA.id  = "cortinaTutorial";
+		DIV_CORTINA.classList.add("mostrar");
+
+		// Criando CSS ;
+		const CSS_ESTILOS = document.createElement('style');
+		CSS_ESTILOS.innerHTML = `
+			#cortinaTutorial {
+				position: absolute;
+				top: 0;
+				left: 0;
+				z-index: 998;
+				width: 100%;
+				height: 100%;
+				background: rgba(0, 0, 0, 0.7);
+				transition: opacity 0.6s;
+				opacity: 0;
+				visibility: hidden;
+			}
+
+			#cortinaTutorial.mostrar {
+				opacity: 1;
+				visibility: visible;
+			}
+
+			.itemTutorialVisivel {
+				z-index: 9999;
+				position : sticky ;
+				opacity: 1;
+				visibility: visible;
+			}
+			`;
+
+		/* Adicionando nosso HTML e CSS */
+		document.head.appendChild(CSS_ESTILOS);
+		document.body.appendChild(DIV_CORTINA);
+
+		/* Total de items e iniciando o tutorial */
+		let totalDeItemsTutorial = elementosDoTutorial.length ;
+		let itemAtualDoTutorial  = 0 ;
+
+		proximoItemTutorial(itemAtualDoTutorial,elementosDoTutorial,totalDeItemsTutorial);
+	}
+
+	/**
+	 * Função auxiliar para transitar entre os itens do tutorial ;
+	 */
+	function proximoItemTutorial(itemAtualDoTutorial,elementosDoTutorial,totalDeItemsTutorial){
+		if(!itemAtualDoTutorial && itemAtualDoTutorial != 0){
+			console.log('O item atual não está definido !');
+			return false ;
+		}
+		if(!elementosDoTutorial){
+			console.log('O tutorial necessita de um array de items a serem focados');
+			return false ;
+		}
+		if(!totalDeItemsTutorial){
+			console.log('O tutorial precisa de uma quantidade definida de items !');
+			return false ;
+		}
+
+		for(let i = itemAtualDoTutorial ; i < totalDeItemsTutorial ; i++){
+			if(i == itemAtualDoTutorial){
+			
+				// Adicionando destaque ao item ;
+				elementosDoTutorial[i].elem.classList.add("itemTutorialVisivel");
+
+				elementosDoTutorial[i].elem.setAttribute('data-toggle','popover');
+				elementosDoTutorial[i].elem.setAttribute('data-container','body');
+				elementosDoTutorial[i].elem.setAttribute('data-content',`Elemento ${i+1} do tutorial `);
+				elementosDoTutorial[i].elem.setAttribute('title',`Elemento ${i+1} do tutorial `);
+				elementosDoTutorial[i].elem.setAttribute('trigger','focus');
+
+				elementosDoTutorial[i].elem.focus();
+
+				// Habilitando popover ;
+				$(function () {
+					$('[data-toggle="popover"]').popover('show')
+				});
+				
+				elementosDoTutorial[i].elem.addEventListener("click",()=>{
+					// Removendo destaque ao item quando clicado ;
+					elementosDoTutorial[i].elem.classList.remove("itemTutorialVisivel");
+
+					/* Se o tamanho total de items for menor que o próximo indice de item + 1 do array de items do tutorial,
+						 focar nesse próximo elemento e efetuar recall da function   */
+					if((i+1) < totalDeItemsTutorial ){
+						elementosDoTutorial[i+1].elem.classList.add("itemTutorialVisivel");
+						proximoItemTutorial(itemAtualDoTutorial+1,elementosDoTutorial,totalDeItemsTutorial);
+					} else {
+						// Final do tutorial , esconder cortina ; 
+						document.getElementById("cortinaTutorial").classList.remove("mostrar")
+					}
+				});
+			} else {
+				// Fechar tooltip dos demais itens ;
+				elementosDoTutorial[i].elem.removeAttribute('data-toggle');
+				elementosDoTutorial[i].elem.removeAttribute('data-container');
+				elementosDoTutorial[i].elem.removeAttribute('data-content');
+				elementosDoTutorial[i].elem.removeAttribute('data-title');
+			}
+			
+		}
+	}
+
+	// Array com os elementos que serão focados ;
+	let elementosDoTutorial = [
+		{
+			"elem": document.getElementById("ex_nome"),
+			"acao": ""
+		},
+		{
+			"elem": document.getElementById("ex_email"),
+			"acao": ""
+		},
+		{
+			"elem": document.getElementById("ex_endereco"),
+			"acao": ""
+		},
+		{
+			"elem": document.getElementById("ex_telefone"),
+			"acao": ""
+		}
+	];
+
+	// Instanciando a função ;
+	gerarTutorial(elementosDoTutorial);
+</script>
