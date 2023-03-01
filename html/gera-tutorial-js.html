@@ -22,11 +22,17 @@
 			<div class="row">
 				<div class="col-12 text-center">
 					<h4>Teste tutorial</h4>
-					<input name="ex_nome" id="ex_nome" placeholder="exemplo de nome" class="form-control w-50 my-2">
-					<input name="ex_email" id="ex_email" placeholder="exemplo de email" class="form-control w-50 my-2">
-					<input name="ex_telefone" id="ex_telefone" placeholder="exemplo de telefone" class="form-control w-50 my-2">
-					<input name="ex_endere&ccedil;o" id="ex_endereco" placeholder="exemplo de endere&ccedil;o" class="form-control w-50 my-2">
-					<button class="btn bg-primary text-white" data-toggle="tooltip" data-html="true" title="Bot&atilde;o de confirma&ccedil;&atilde;o">OK</button>
+					<div class="row">
+						<input name="ex_nome" id="ex_nome" placeholder="exemplo de nome" class="form-control w-75 my-2">
+						<input name="ex_email" id="ex_email" placeholder="exemplo de email" class="form-control w-75 my-2">
+						<input name="ex_telefone" id="ex_telefone" placeholder="exemplo de telefone" class="form-control w-75 my-2">
+						<input name="ex_endere&ccedil;o" id="ex_endereco" placeholder="exemplo de endere&ccedil;o" class="form-control w-75 my-2">
+					</div>
+					<div class="row">
+						<div class="col-6">
+							<button class="btn bg-primary text-white" title="Bot&atilde;o de confirma&ccedil;&atilde;o">OK</button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -34,21 +40,28 @@
 </body>
 </html>
 <script>
-	// Habilitando tooltip ;
-	$(function () {
-		$('[data-toggle="tooltip"]').tooltip('show')
-	});
-
+	/* Função responsável por gerar um tutorial */
 	function gerarTutorial(elementosDoTutorial){
 		if(!elementosDoTutorial){
 			console.log('Informe um array de items do DOM para serem usados no tutorial');
 		}
 
-		// Criando arquivos HTML e CSS e os adicionando ;
-		// Criando HTML ; 
+		/* Criando arquivos HTML e CSS e os adicionando ; */
+		// Criando HTML - div cortina (sombreado) ; 
 		const DIV_CORTINA = document.createElement("div");
 		DIV_CORTINA.id  = "cortinaTutorial";
 		DIV_CORTINA.classList.add("mostrar");
+
+		/* Criando HTML - div para instruções */
+		const DIV_INSTRUTORA = document.createElement("div");
+		DIV_INSTRUTORA.id = "divInstrucaoTutorial";
+		DIV_INSTRUTORA.style.width = Math.floor(screen.availWidth/4)+'px';
+		DIV_INSTRUTORA.style.height = Math.floor(screen.availHeight/5)+'px';
+		DIV_INSTRUTORA.style.backgroundColor = "white";
+		DIV_INSTRUTORA.style.color = "black";
+		DIV_INSTRUTORA.classList.add("mostrar");
+		DIV_INSTRUTORA.classList.add("rounded");
+		DIV_INSTRUTORA.innerHTML = "TUTORIAL";
 
 		// Criando CSS ;
 		const CSS_ESTILOS = document.createElement('style');
@@ -71,8 +84,21 @@
 				visibility: visible;
 			}
 
-			.itemTutorialVisivel {
+			#divInstrucaoTutorial {
 				z-index: 9999;
+				position : sticky ;
+				text-align : center ;
+				opacity: 0;
+				visibility: hidden;
+			}
+
+			#divInstrucaoTutorial.mostrar {
+				opacity: 1;
+				visibility: visible;
+			}
+
+			.itemTutorialVisivel {
+				z-index: 9998;
 				position : sticky ;
 				opacity: 1;
 				visibility: visible;
@@ -82,18 +108,19 @@
 		/* Adicionando nosso HTML e CSS */
 		document.head.appendChild(CSS_ESTILOS);
 		document.body.appendChild(DIV_CORTINA);
+		document.body.appendChild(DIV_INSTRUTORA);
 
 		/* Total de items e iniciando o tutorial */
 		let totalDeItemsTutorial = elementosDoTutorial.length ;
 		let itemAtualDoTutorial  = 0 ;
 
-		proximoItemTutorial(itemAtualDoTutorial,elementosDoTutorial,totalDeItemsTutorial);
+		irParaDoItemTutorial(itemAtualDoTutorial,elementosDoTutorial,totalDeItemsTutorial);
 	}
 
 	/**
 	 * Função auxiliar para transitar entre os itens do tutorial ;
 	 */
-	function proximoItemTutorial(itemAtualDoTutorial,elementosDoTutorial,totalDeItemsTutorial){
+	function irParaDoItemTutorial(itemAtualDoTutorial,elementosDoTutorial,totalDeItemsTutorial){
 		if(!itemAtualDoTutorial && itemAtualDoTutorial != 0){
 			console.log('O item atual não está definido !');
 			return false ;
@@ -112,19 +139,23 @@
 			
 				// Adicionando destaque ao item ;
 				elementosDoTutorial[i].elem.classList.add("itemTutorialVisivel");
-
-				elementosDoTutorial[i].elem.setAttribute('data-toggle','popover');
-				elementosDoTutorial[i].elem.setAttribute('data-container','body');
-				elementosDoTutorial[i].elem.setAttribute('data-content',`Elemento ${i+1} do tutorial `);
-				elementosDoTutorial[i].elem.setAttribute('title',`Elemento ${i+1} do tutorial `);
-				elementosDoTutorial[i].elem.setAttribute('trigger','focus');
-
 				elementosDoTutorial[i].elem.focus();
 
-				// Habilitando popover ;
-				$(function () {
-					$('[data-toggle="popover"]').popover('show')
-				});
+				if(elementosDoTutorial[i].elem_clicavel == "N"){
+					elementosDoTutorial[i].elem.disabled = true;
+				}
+
+				/* Posicionando divInstrucaoTutorial  */
+				document.getElementById("divInstrucaoTutorial").style.position = 'fixed';
+				document.getElementById("divInstrucaoTutorial").style.top = `${Math.round(elementosDoTutorial[i].elem.getBoundingClientRect().top + elementosDoTutorial[i].elem.style.height + 10 )}px`;
+				document.getElementById("divInstrucaoTutorial").style.left = `${Math.round(elementosDoTutorial[i].elem.getBoundingClientRect().left + elementosDoTutorial[i].elem.getBoundingClientRect().width + 10) }px`;
+				
+				document.getElementById("divInstrucaoTutorial").textContent = `Elemento ${i+1} do tutorial`;
+
+				document.getElementById("divInstrucaoTutorial").style.position = 'styck';
+
+				console.log(document.getElementById("divInstrucaoTutorial").getBoundingClientRect().top)
+				console.log(document.getElementById("divInstrucaoTutorial").getBoundingClientRect().left)
 				
 				elementosDoTutorial[i].elem.addEventListener("click",()=>{
 					// Removendo destaque ao item quando clicado ;
@@ -134,20 +165,26 @@
 						 focar nesse próximo elemento e efetuar recall da function   */
 					if((i+1) < totalDeItemsTutorial ){
 						elementosDoTutorial[i+1].elem.classList.add("itemTutorialVisivel");
-						proximoItemTutorial(itemAtualDoTutorial+1,elementosDoTutorial,totalDeItemsTutorial);
+						irParaDoItemTutorial(itemAtualDoTutorial+1,elementosDoTutorial,totalDeItemsTutorial);
 					} else {
 						// Final do tutorial , esconder cortina ; 
 						document.getElementById("cortinaTutorial").classList.remove("mostrar")
+						document.getElementById("divInstrucaoTutorial").classList.remove("mostrar")
 					}
 				});
-			} else {
-				// Fechar tooltip dos demais itens ;
-				elementosDoTutorial[i].elem.removeAttribute('data-toggle');
-				elementosDoTutorial[i].elem.removeAttribute('data-container');
-				elementosDoTutorial[i].elem.removeAttribute('data-content');
-				elementosDoTutorial[i].elem.removeAttribute('data-title');
-			}
-			
+
+				if(elementosDoTutorial[i].elem_clicavel == "N"){
+					let tempo_liberacao =  5000 ;
+					if(elementosDoTutorial[i].elem_liberacao_timeout.trim() !== "" && elementosDoTutorial[i].elem_liberacao_timeout.trim() != null ){
+						tempo_liberacao = elementosDoTutorial[i].elem_liberacao_timeout;
+					}
+					setTimeout(()=>{
+						elementosDoTutorial[i].elem.disabled = false;
+						elementosDoTutorial[i].elem.click();
+					},tempo_liberacao);
+				}
+
+			} 
 		}
 	}
 
@@ -155,18 +192,26 @@
 	let elementosDoTutorial = [
 		{
 			"elem": document.getElementById("ex_nome"),
+			"elem_clicavel":"S",
+			"elem_liberacao_timeout":"3000",
 			"acao": ""
 		},
 		{
 			"elem": document.getElementById("ex_email"),
+			"elem_clicavel":"N",
+			"elem_liberacao_timeout":"10000",
 			"acao": ""
 		},
 		{
 			"elem": document.getElementById("ex_endereco"),
+			"elem_clicavel":"N",
+			"elem_liberacao_timeout":"3000",
 			"acao": ""
 		},
 		{
 			"elem": document.getElementById("ex_telefone"),
+			"elem_clicavel":"S",
+			"elem_liberacao_timeout":"3000",
 			"acao": ""
 		}
 	];
