@@ -46,6 +46,8 @@
 			console.log('Informe um array de items do DOM para serem usados no tutorial');
 		}
 
+		let dispositivo_tam = "";
+
 		/* Criando arquivos HTML e CSS e os adicionando ; */
 		// Criando HTML - div cortina (sombreado) ; 
 		const DIV_CORTINA = document.createElement("div");
@@ -55,8 +57,15 @@
 		/* Criando HTML - div para instruções */
 		const DIV_INSTRUTORA = document.createElement("div");
 		DIV_INSTRUTORA.id = "divInstrucaoTutorial";
-		DIV_INSTRUTORA.style.width = Math.floor(screen.availWidth/4)+'px';
-		DIV_INSTRUTORA.style.height = Math.floor(screen.availHeight/5)+'px';
+		if(screen.availWidth >= 768){
+			dispositivo_tam = "PC";
+			DIV_INSTRUTORA.style.width = Math.floor(screen.availWidth/4)+'px';
+			DIV_INSTRUTORA.style.height = Math.floor(screen.availHeight/5)+'px';
+		} else {
+			dispositivo_tam = "TABLET";
+			DIV_INSTRUTORA.style.width = Math.floor(screen.availWidth/2)+'px';
+			DIV_INSTRUTORA.style.height = Math.floor(screen.availHeight/3)+'px';
+		}
 		DIV_INSTRUTORA.style.backgroundColor = "white";
 		DIV_INSTRUTORA.style.color = "black";
 		DIV_INSTRUTORA.classList.add("mostrar");
@@ -103,7 +112,7 @@
 				opacity: 1;
 				visibility: visible;
 			}
-			`;
+		`;
 
 		/* Adicionando nosso HTML e CSS */
 		document.head.appendChild(CSS_ESTILOS);
@@ -114,13 +123,13 @@
 		let totalDeItemsTutorial = elementosDoTutorial.length ;
 		let itemAtualDoTutorial  = 0 ;
 
-		irParaDoItemTutorial(itemAtualDoTutorial,elementosDoTutorial,totalDeItemsTutorial);
+		irParaItemDoTutorial(itemAtualDoTutorial,elementosDoTutorial,totalDeItemsTutorial);
 	}
 
 	/**
 	 * Função auxiliar para transitar entre os itens do tutorial ;
 	 */
-	function irParaDoItemTutorial(itemAtualDoTutorial,elementosDoTutorial,totalDeItemsTutorial){
+	function irParaItemDoTutorial(itemAtualDoTutorial,elementosDoTutorial,totalDeItemsTutorial){
 		if(!itemAtualDoTutorial && itemAtualDoTutorial != 0){
 			console.log('O item atual não está definido !');
 			return false ;
@@ -134,6 +143,16 @@
 			return false ;
 		}
 
+		let divInstrucaoTutorial = document.getElementById("divInstrucaoTutorial");
+
+		if(screen.availWidth >= 768){
+			dispositivo_tam = "PC";
+			fator_mult_1 = 1.25 ;
+		} else {
+			dispositivo_tam = "MOB";
+			fator_mult_1 = 3.5 ;  
+		}
+
 		for(let i = itemAtualDoTutorial ; i < totalDeItemsTutorial ; i++){
 			if(i == itemAtualDoTutorial){
 			
@@ -145,17 +164,44 @@
 					elementosDoTutorial[i].elem.disabled = true;
 				}
 
+				if(elementosDoTutorial[i].elem_iHTML.trim() !== ""){
+					divInstrucaoTutorial.innerHTML = elementosDoTutorial[i].elem_iHTML;
+				}
+
 				/* Posicionando divInstrucaoTutorial  */
-				document.getElementById("divInstrucaoTutorial").style.position = 'fixed';
-				document.getElementById("divInstrucaoTutorial").style.top = `${Math.round(elementosDoTutorial[i].elem.getBoundingClientRect().top + elementosDoTutorial[i].elem.style.height + 10 )}px`;
-				document.getElementById("divInstrucaoTutorial").style.left = `${Math.round(elementosDoTutorial[i].elem.getBoundingClientRect().left + elementosDoTutorial[i].elem.getBoundingClientRect().width + 10) }px`;
+				divInstrucaoTutorial.style.position = 'fixed';
+
+				//COMENTADO, ESTÁ EM TESTES ;
+				// POS em X :
+				// if(elementosDoTutorial[i].elem_pos_x == "direita") {
+				// 	divInstrucaoTutorial.style.left = `${Math.round(elementosDoTutorial[i].elem.getBoundingClientRect().left + elementosDoTutorial[i].elem.getBoundingClientRect().width + 3) }px`;
+				// } else if(elementosDoTutorial[i].elem_pos_x == "esquerda") {
+				// 	divInstrucaoTutorial.style.left = `${Math.round(elementosDoTutorial[i].elem.getBoundingClientRect().left ) }px`;
+				// } else {
+				// 	divInstrucaoTutorial.style.left = `${Math.round((screen.availWidth/2) - divInstrucaoTutorial.getBoundingClientRect().width/1.25)}px`;
+				// }
 				
-				document.getElementById("divInstrucaoTutorial").textContent = `Elemento ${i+1} do tutorial`;
+				// // POS em Y :
+				// if(elementosDoTutorial[i].elem_pos_y == "abaixo") {
+				// 	divInstrucaoTutorial.style.top = `${Math.round(elementosDoTutorial[i].elem.getBoundingClientRect().top + elementosDoTutorial[i].elem.getBoundingClientRect().height + 3 )}px`;
+				// } else if(elementosDoTutorial[i].elem_pos_y == "acima") {
+				// 	divInstrucaoTutorial.style.top = `${Math.round((elementosDoTutorial[i].elem.getBoundingClientRect().top - (elementosDoTutorial[i].elem.getBoundingClientRect().height * fator_mult_1 ) - elementosDoTutorial[i].elem.getBoundingClientRect().height * 2) )}px`;
+				// } else {
+				// 	divInstrucaoTutorial.style.top = `${Math.round((screen.availHeight/2) - divInstrucaoTutorial.getBoundingClientRect().height/2)}px`;
+				// }
 
-				document.getElementById("divInstrucaoTutorial").style.position = 'styck';
+				if(elementosDoTutorial[i].elem_pos_x !== ""){
+					divInstrucaoTutorial.style.left = `${Math.round((elementosDoTutorial[i].elem.getBoundingClientRect().left) + +calcPixelsTelaPorPorcentagem(elementosDoTutorial[i].elem_pos_x,'w')) }px`;
+				}
 
-				console.log(document.getElementById("divInstrucaoTutorial").getBoundingClientRect().top)
-				console.log(document.getElementById("divInstrucaoTutorial").getBoundingClientRect().left)
+				if(elementosDoTutorial[i].elem_pos_y !== ""){
+					divInstrucaoTutorial.style.top = `${Math.round((elementosDoTutorial[i].elem.getBoundingClientRect().top) + +calcPixelsTelaPorPorcentagem(elementosDoTutorial[i].elem_pos_y,'h')) }px`;
+				}
+
+				divInstrucaoTutorial.style.position = 'styck';
+
+				console.log(divInstrucaoTutorial.getBoundingClientRect().top)
+				console.log(divInstrucaoTutorial.getBoundingClientRect().left)
 				
 				elementosDoTutorial[i].elem.addEventListener("click",()=>{
 					// Removendo destaque ao item quando clicado ;
@@ -165,11 +211,11 @@
 						 focar nesse próximo elemento e efetuar recall da function   */
 					if((i+1) < totalDeItemsTutorial ){
 						elementosDoTutorial[i+1].elem.classList.add("itemTutorialVisivel");
-						irParaDoItemTutorial(itemAtualDoTutorial+1,elementosDoTutorial,totalDeItemsTutorial);
+						irParaItemDoTutorial(itemAtualDoTutorial+1,elementosDoTutorial,totalDeItemsTutorial);
 					} else {
 						// Final do tutorial , esconder cortina ; 
-						document.getElementById("cortinaTutorial").classList.remove("mostrar")
-						document.getElementById("divInstrucaoTutorial").classList.remove("mostrar")
+						document.getElementById("cortinaTutorial").classList.remove("mostrar");
+						divInstrucaoTutorial.classList.remove("mostrar");
 					}
 				});
 
@@ -186,6 +232,19 @@
 
 			} 
 		}
+	}	
+
+	// Informa quantos pixels formam a porcentagem informada na tela do usuário ;
+	function calcPixelsTelaPorPorcentagem(porcentagem,param) {
+		if(param == "w"){
+			param = screen.availWidth;
+		} else if (param == "h"){
+			param = screen.availHeight;
+		}
+		const tamanhoDisponivel = param;
+		const pixels = (porcentagem / 100) * tamanhoDisponivel;
+		
+		return pixels;
 	}
 
 	// Array com os elementos que serão focados ;
@@ -194,25 +253,33 @@
 			"elem": document.getElementById("ex_nome"),
 			"elem_clicavel":"S",
 			"elem_liberacao_timeout":"3000",
-			"acao": ""
+			"elem_pos_x": "20",
+			"elem_pos_y": "6",
+			"elem_iHTML":"<span class='bg-danger'>Tutorial</span>"
 		},
 		{
 			"elem": document.getElementById("ex_email"),
 			"elem_clicavel":"N",
-			"elem_liberacao_timeout":"10000",
-			"acao": ""
+			"elem_liberacao_timeout":"2000",
+			"elem_pos_x": "10",
+			"elem_pos_y": "6",
+			"elem_iHTML":"<p>Teste de T&iacute;tulo 1</p>"
 		},
 		{
 			"elem": document.getElementById("ex_endereco"),
 			"elem_clicavel":"N",
 			"elem_liberacao_timeout":"3000",
-			"acao": ""
+			"elem_pos_x": "10",
+			"elem_pos_y": "6",
+			"elem_iHTML":"<p>Teste de T&iacute;tulo 2</p>"
 		},
 		{
 			"elem": document.getElementById("ex_telefone"),
 			"elem_clicavel":"S",
 			"elem_liberacao_timeout":"3000",
-			"acao": ""
+			"elem_pos_x": "10",
+			"elem_pos_y": "6",
+			"elem_iHTML":"<p>Teste de T&iacute;tulo 3</p>"
 		}
 	];
 
