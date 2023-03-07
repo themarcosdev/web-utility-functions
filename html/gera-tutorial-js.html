@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>TUTORIAL</title>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js" integrity="sha512-2rNj2KJ+D8s1ceNasTIex6z4HWyOnEYLVC3FigGOmyQCZc2eBXKgOxQmo3oKLHyfcj53uz4QMsRCWNbLd32Q1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"
+		integrity="sha512-2rNj2KJ+D8s1ceNasTIex6z4HWyOnEYLVC3FigGOmyQCZc2eBXKgOxQmo3oKLHyfcj53uz4QMsRCWNbLd32Q1g=="
+		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-			integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+		integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
 	</script>
@@ -16,6 +19,7 @@
 		crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js"></script>
 </head>
+
 <body>
 	<div class="container">
 		<div class="container-fluid">
@@ -24,13 +28,17 @@
 					<h4>Teste tutorial</h4>
 					<div class="row">
 						<input name="ex_nome" id="ex_nome" placeholder="exemplo de nome" class="form-control w-75 my-2">
-						<input name="ex_email" id="ex_email" placeholder="exemplo de email" class="form-control w-75 my-2">
-						<input name="ex_telefone" id="ex_telefone" placeholder="exemplo de telefone" class="form-control w-75 my-2">
-						<input name="ex_endere&ccedil;o" id="ex_endereco" placeholder="exemplo de endere&ccedil;o" class="form-control w-75 my-2">
+						<input name="ex_email" id="ex_email" placeholder="exemplo de email"
+							class="form-control w-75 my-2">
+						<input name="ex_telefone" id="ex_telefone" placeholder="exemplo de telefone"
+							class="form-control w-75 my-2">
+						<input name="ex_endere&ccedil;o" id="ex_endereco" placeholder="exemplo de endere&ccedil;o"
+							class="form-control w-75 my-2">
 					</div>
 					<div class="row">
 						<div class="col-6">
-							<button class="btn bg-primary text-white" title="Bot&atilde;o de confirma&ccedil;&atilde;o">OK</button>
+							<button class="btn bg-primary text-white"
+								title="Bot&atilde;o de confirma&ccedil;&atilde;o">OK</button>
 						</div>
 					</div>
 				</div>
@@ -38,39 +46,50 @@
 		</div>
 	</div>
 </body>
+
 </html>
 <script>
 	/* Função responsável por gerar um tutorial */
-	function gerarTutorial(elementosDoTutorial){
-		if(!elementosDoTutorial){
+	function gerarTutorial(elementosDoTutorial) {
+		if (!elementosDoTutorial) {
 			console.log('Informe um array de items do DOM para serem usados no tutorial');
 		}
 
-		let dispositivo_tam = "";
-
 		/* Criando arquivos HTML e CSS e os adicionando ; */
-		// Criando HTML - div cortina (sombreado) ; 
+		/* Criando HTML - div cortina (sombreado) ; */
 		const DIV_CORTINA = document.createElement("div");
-		DIV_CORTINA.id  = "cortinaTutorial";
+		DIV_CORTINA.id = "cortinaTutorial";
 		DIV_CORTINA.classList.add("mostrar");
 
 		/* Criando HTML - div para instruções */
 		const DIV_INSTRUTORA = document.createElement("div");
 		DIV_INSTRUTORA.id = "divInstrucaoTutorial";
-		if(screen.availWidth >= 768){
-			dispositivo_tam = "PC";
-			DIV_INSTRUTORA.style.width = Math.floor(screen.availWidth/4)+'px';
-			DIV_INSTRUTORA.style.height = Math.floor(screen.availHeight/5)+'px';
+		if (screen.availWidth >= 768) {
+			DIV_INSTRUTORA.style.width = Math.floor(screen.availWidth / 4) + 'px';
+			DIV_INSTRUTORA.style.height = Math.floor(screen.availHeight / 5) + 'px';
 		} else {
-			dispositivo_tam = "TABLET";
-			DIV_INSTRUTORA.style.width = Math.floor(screen.availWidth/2)+'px';
-			DIV_INSTRUTORA.style.height = Math.floor(screen.availHeight/3)+'px';
+			DIV_INSTRUTORA.style.width = Math.floor(screen.availWidth / 2) + 'px';
+			DIV_INSTRUTORA.style.height = Math.floor(screen.availHeight / 3) + 'px';
 		}
 		DIV_INSTRUTORA.style.backgroundColor = "white";
 		DIV_INSTRUTORA.style.color = "black";
 		DIV_INSTRUTORA.classList.add("mostrar");
 		DIV_INSTRUTORA.classList.add("rounded");
 		DIV_INSTRUTORA.innerHTML = "TUTORIAL";
+
+		/* Criando HTML - div para Controles */
+		const DIV_CONTROLES = document.createElement("div");
+		DIV_CONTROLES.id = "divControles";
+		DIV_CONTROLES.classList.add("mostrar");
+		DIV_CONTROLES.innerHTML = `
+			<div>
+				<span id="spnInfoTutorial">ITEM/ITEM</span>
+			</div>
+			<div style="padding-bottom:10px;">
+				<!-- <button id="btnTutorialAnt" > ← </button> -->
+				<button id="btnTutorialProx" > → </button>
+			</div>
+		`;
 
 		// Criando CSS ;
 		const CSS_ESTILOS = document.createElement('style');
@@ -101,9 +120,21 @@
 				visibility: hidden;
 			}
 
-			#divInstrucaoTutorial.mostrar {
+			#divControles.mostrar, #divInstrucaoTutorial.mostrar {
 				opacity: 1;
 				visibility: visible;
+			}
+
+			#divControles {
+				position: sticky;
+				width: 100%;
+				height: 60px;
+				background-color: blue;
+				color: white;
+				text-align: center;
+				z-index: 9999;
+				opacity: 0;
+				visibility: hidden;
 			}
 
 			.itemTutorialVisivel {
@@ -112,174 +143,207 @@
 				opacity: 1;
 				visibility: visible;
 			}
+
+			button {
+				border : 1px solid ;
+			}
 		`;
 
 		/* Adicionando nosso HTML e CSS */
 		document.head.appendChild(CSS_ESTILOS);
 		document.body.appendChild(DIV_CORTINA);
 		document.body.appendChild(DIV_INSTRUTORA);
+		document.body.appendChild(DIV_CONTROLES);
 
 		/* Total de items e iniciando o tutorial */
-		let totalDeItemsTutorial = elementosDoTutorial.length ;
-		let itemAtualDoTutorial  = 0 ;
+		let totalDeItemsTutorial = elementosDoTutorial.length;
+		let itemAtualDoTutorial = 0;
 
-		irParaItemDoTutorial(itemAtualDoTutorial,elementosDoTutorial,totalDeItemsTutorial);
+		irParaItemDoTutorial(itemAtualDoTutorial, elementosDoTutorial, totalDeItemsTutorial);
 	}
 
 	/**
 	 * Função auxiliar para transitar entre os itens do tutorial ;
 	 */
-	function irParaItemDoTutorial(itemAtualDoTutorial,elementosDoTutorial,totalDeItemsTutorial){
-		if(!itemAtualDoTutorial && itemAtualDoTutorial != 0){
+	function irParaItemDoTutorial(itemAtualDoTutorial, elementosDoTutorial, totalDeItemsTutorial) {
+
+		if (!itemAtualDoTutorial && itemAtualDoTutorial != 0) {
 			console.log('O item atual não está definido !');
-			return false ;
+			return false;
 		}
-		if(!elementosDoTutorial){
+		if (!elementosDoTutorial) {
 			console.log('O tutorial necessita de um array de items a serem focados');
-			return false ;
+			return false;
 		}
-		if(!totalDeItemsTutorial){
+		if (!totalDeItemsTutorial) {
 			console.log('O tutorial precisa de uma quantidade definida de items !');
-			return false ;
+			return false;
 		}
 
 		let divInstrucaoTutorial = document.getElementById("divInstrucaoTutorial");
+		let divControles = document.getElementById("divControles");
+		let btnAnt = document.getElementById("btnTutorialAnt");
+		let btnProx = document.getElementById("btnTutorialProx");
+		let spnInfoTutorial = document.getElementById("spnInfoTutorial");
 
-		if(screen.availWidth >= 768){
-			dispositivo_tam = "PC";
-			fator_mult_1 = 1.25 ;
-		} else {
-			dispositivo_tam = "MOB";
-			fator_mult_1 = 3.5 ;  
-		}
 
-		for(let i = itemAtualDoTutorial ; i < totalDeItemsTutorial ; i++){
-			if(i == itemAtualDoTutorial){
-			
+		spnInfoTutorial.textContent = `${(1)} | ${totalDeItemsTutorial}`;
+
+		for (let i = itemAtualDoTutorial; i < totalDeItemsTutorial; i++) {
+			if (i == itemAtualDoTutorial) {
+				
+				// Alterando texto do btn de prox item caso seja o item final ;
+				if(itemAtualDoTutorial == (totalDeItemsTutorial - 1)){
+					btnProx.textContent = '✔';
+				}
+				
 				// Adicionando destaque ao item ;
 				elementosDoTutorial[i].elem.classList.add("itemTutorialVisivel");
 				elementosDoTutorial[i].elem.focus();
 
-				if(elementosDoTutorial[i].elem_clicavel == "N"){
+				if (elementosDoTutorial[i].elem_clicavel == "N") {
 					elementosDoTutorial[i].elem.disabled = true;
 				}
 
-				if(elementosDoTutorial[i].elem_iHTML.trim() !== ""){
+				if (elementosDoTutorial[i].elem_clicavel == "N") {
+					let tempo_liberacao = 5000;
+					if (elementosDoTutorial[i].elem_liberacao_timeout.trim() !== "" && elementosDoTutorial[i]
+						.elem_liberacao_timeout.trim() != null) {
+						tempo_liberacao = elementosDoTutorial[i].elem_liberacao_timeout;
+					}
+				}
+
+				if (elementosDoTutorial[i].elem_iHTML.trim() !== "") {
 					divInstrucaoTutorial.innerHTML = elementosDoTutorial[i].elem_iHTML;
 				}
 
 				/* Posicionando divInstrucaoTutorial  */
 				divInstrucaoTutorial.style.position = 'fixed';
 
-				//COMENTADO, ESTÁ EM TESTES ;
-				// POS em X :
-				// if(elementosDoTutorial[i].elem_pos_x == "direita") {
-				// 	divInstrucaoTutorial.style.left = `${Math.round(elementosDoTutorial[i].elem.getBoundingClientRect().left + elementosDoTutorial[i].elem.getBoundingClientRect().width + 3) }px`;
-				// } else if(elementosDoTutorial[i].elem_pos_x == "esquerda") {
-				// 	divInstrucaoTutorial.style.left = `${Math.round(elementosDoTutorial[i].elem.getBoundingClientRect().left ) }px`;
-				// } else {
-				// 	divInstrucaoTutorial.style.left = `${Math.round((screen.availWidth/2) - divInstrucaoTutorial.getBoundingClientRect().width/1.25)}px`;
-				// }
-				
-				// // POS em Y :
-				// if(elementosDoTutorial[i].elem_pos_y == "abaixo") {
-				// 	divInstrucaoTutorial.style.top = `${Math.round(elementosDoTutorial[i].elem.getBoundingClientRect().top + elementosDoTutorial[i].elem.getBoundingClientRect().height + 3 )}px`;
-				// } else if(elementosDoTutorial[i].elem_pos_y == "acima") {
-				// 	divInstrucaoTutorial.style.top = `${Math.round((elementosDoTutorial[i].elem.getBoundingClientRect().top - (elementosDoTutorial[i].elem.getBoundingClientRect().height * fator_mult_1 ) - elementosDoTutorial[i].elem.getBoundingClientRect().height * 2) )}px`;
-				// } else {
-				// 	divInstrucaoTutorial.style.top = `${Math.round((screen.availHeight/2) - divInstrucaoTutorial.getBoundingClientRect().height/2)}px`;
-				// }
-
-				if(elementosDoTutorial[i].elem_pos_x !== ""){
-					divInstrucaoTutorial.style.left = `${Math.round((elementosDoTutorial[i].elem.getBoundingClientRect().left) + +calcPixelsTelaPorPorcentagem(elementosDoTutorial[i].elem_pos_x,'w')) }px`;
+				if (elementosDoTutorial[i].elem_pos_x !== "") {
+					divInstrucaoTutorial.style.left =
+						`${Math.round((elementosDoTutorial[i].elem.getBoundingClientRect().left) + +elementosDoTutorial[i].elem_pos_x) }px`;
 				}
 
-				if(elementosDoTutorial[i].elem_pos_y !== ""){
-					divInstrucaoTutorial.style.top = `${Math.round((elementosDoTutorial[i].elem.getBoundingClientRect().top) + +calcPixelsTelaPorPorcentagem(elementosDoTutorial[i].elem_pos_y,'h')) }px`;
+				if (elementosDoTutorial[i].elem_pos_y !== "") {
+					divInstrucaoTutorial.style.top =
+						`${Math.round((elementosDoTutorial[i].elem.getBoundingClientRect().top) + +elementosDoTutorial[i].elem_pos_y) }px`;
 				}
 
 				divInstrucaoTutorial.style.position = 'styck';
 
-				console.log(divInstrucaoTutorial.getBoundingClientRect().top)
-				console.log(divInstrucaoTutorial.getBoundingClientRect().left)
-				
-				elementosDoTutorial[i].elem.addEventListener("click",()=>{
+				/* Posicionando divControles  */
+				divControles.style.position = 'fixed';
+				divControles.style.top = (divInstrucaoTutorial.getBoundingClientRect().bottom) + 'px';
+				divControles.style.left = (divInstrucaoTutorial.getBoundingClientRect().left) + 'px';
+				divControles.style.width = (divInstrucaoTutorial.getBoundingClientRect().width) + 'px';
+				divControles.style.position = 'styck';
+
+				// console.log(divInstrucaoTutorial.getBoundingClientRect().top)
+				// console.log(divInstrucaoTutorial.getBoundingClientRect().left)
+
+				console.log(itemAtualDoTutorial);
+
+				// EM TESTE - 
+				/* 	btnAnt.addEventListener("click", () => {
+						// Removendo destaque ao item quando clicado ;
+						elementosDoTutorial[i].elem.classList.remove("itemTutorialVisivel");
+
+						// Reabilitando item caso esteja desabilitado ;
+						if (elementosDoTutorial[i].elem.disabled == true && elementosDoTutorial[i].elem_clicavel ==	"N") {
+							elementosDoTutorial[i].elem.disabled = false;
+						}
+
+						// Se o tamanho total de items for menor que o próximo indice de item - 1 do array de items do tutorial,
+							// focar nesse próximo elemento e efetuar recall da function   
+						if ((i > 0)) {
+							elementosDoTutorial[i - 1].elem.classList.add("itemTutorialVisivel");
+							irParaItemDoTutorial(itemAtualDoTutorial - 1, elementosDoTutorial,
+								totalDeItemsTutorial);
+							spnInfoTutorial.textContent = `${(itemAtualDoTutorial - 1 != 0) ? (itemAtualDoTutorial -1) : 1} | ${totalDeItemsTutorial}`;
+						} 
+					}); */
+
+				btnProx.addEventListener("click", () => {
 					// Removendo destaque ao item quando clicado ;
 					elementosDoTutorial[i].elem.classList.remove("itemTutorialVisivel");
 
+					// Reabilitando item caso esteja desabilitado ;
+					if (elementosDoTutorial[i].elem.disabled == true && elementosDoTutorial[i].elem_clicavel == "N") {
+						elementosDoTutorial[i].elem.disabled = false;
+					}
+
 					/* Se o tamanho total de items for menor que o próximo indice de item + 1 do array de items do tutorial,
 						 focar nesse próximo elemento e efetuar recall da function   */
-					if((i+1) < totalDeItemsTutorial ){
-						elementosDoTutorial[i+1].elem.classList.add("itemTutorialVisivel");
-						irParaItemDoTutorial(itemAtualDoTutorial+1,elementosDoTutorial,totalDeItemsTutorial);
+					if ((i + 1) < totalDeItemsTutorial) {
+						elementosDoTutorial[i + 1].elem.classList.add("itemTutorialVisivel");
+						irParaItemDoTutorial(itemAtualDoTutorial + 1, elementosDoTutorial,
+							totalDeItemsTutorial);
+						spnInfoTutorial.textContent = `${(itemAtualDoTutorial + 2)} | ${totalDeItemsTutorial}`;
 					} else {
 						// Final do tutorial , esconder cortina ; 
 						document.getElementById("cortinaTutorial").classList.remove("mostrar");
 						divInstrucaoTutorial.classList.remove("mostrar");
+						divControles.classList.remove("mostrar");
 					}
 				});
-
-				if(elementosDoTutorial[i].elem_clicavel == "N"){
-					let tempo_liberacao =  5000 ;
-					if(elementosDoTutorial[i].elem_liberacao_timeout.trim() !== "" && elementosDoTutorial[i].elem_liberacao_timeout.trim() != null ){
-						tempo_liberacao = elementosDoTutorial[i].elem_liberacao_timeout;
-					}
-					setTimeout(()=>{
-						elementosDoTutorial[i].elem.disabled = false;
-						elementosDoTutorial[i].elem.click();
-					},tempo_liberacao);
-				}
-
-			} 
+			}
 		}
-	}	
+	}
 
 	// Informa quantos pixels formam a porcentagem informada na tela do usuário ;
-	function calcPixelsTelaPorPorcentagem(porcentagem,param) {
-		if(param == "w"){
+	function calcPixelsTelaPorPorcentagem(porcentagem, param) {
+		if (param == "w") {
 			param = screen.availWidth;
-		} else if (param == "h"){
+		} else if (param == "h") {
 			param = screen.availHeight;
 		}
 		const tamanhoDisponivel = param;
 		const pixels = (porcentagem / 100) * tamanhoDisponivel;
-		
+
 		return pixels;
 	}
 
 	// Array com os elementos que serão focados ;
-	let elementosDoTutorial = [
-		{
+	let elementosDoTutorial = [{
 			"elem": document.getElementById("ex_nome"),
-			"elem_clicavel":"S",
-			"elem_liberacao_timeout":"3000",
+			"elem_clicavel": "S",
+			"elem_liberacao_timeout": "3000",
 			"elem_pos_x": "20",
-			"elem_pos_y": "6",
-			"elem_iHTML":"<span class='bg-danger'>Tutorial</span>"
+			"elem_pos_y": "50",
+			"elem_iHTML": "<span class='bg-danger'>Tutorial</span>"
 		},
 		{
 			"elem": document.getElementById("ex_email"),
-			"elem_clicavel":"N",
-			"elem_liberacao_timeout":"2000",
-			"elem_pos_x": "10",
-			"elem_pos_y": "6",
-			"elem_iHTML":"<p>Teste de T&iacute;tulo 1</p>"
+			"elem_clicavel": "N",
+			"elem_liberacao_timeout": "2000",
+			"elem_pos_x": "20",
+			"elem_pos_y": "50",
+			"elem_iHTML": "<p>Teste de T&iacute;tulo 1</p>"
 		},
 		{
 			"elem": document.getElementById("ex_endereco"),
-			"elem_clicavel":"N",
-			"elem_liberacao_timeout":"3000",
-			"elem_pos_x": "10",
-			"elem_pos_y": "6",
-			"elem_iHTML":"<p>Teste de T&iacute;tulo 2</p>"
+			"elem_clicavel": "N",
+			"elem_liberacao_timeout": "3000",
+			"elem_pos_x": "20",
+			"elem_pos_y": "50",
+			"elem_iHTML": "<p>Teste de T&iacute;tulo 2</p>"
 		},
 		{
 			"elem": document.getElementById("ex_telefone"),
-			"elem_clicavel":"S",
-			"elem_liberacao_timeout":"3000",
-			"elem_pos_x": "10",
-			"elem_pos_y": "6",
-			"elem_iHTML":"<p>Teste de T&iacute;tulo 3</p>"
+			"elem_clicavel": "S",
+			"elem_liberacao_timeout": "3000",
+			"elem_pos_x": "20",
+			"elem_pos_y": "50",
+			"elem_iHTML": "<p>Teste de T&iacute;tulo 3</p>"
+		},
+		{
+			"elem": document.getElementsByTagName("button")[0],
+			"elem_clicavel": "S",
+			"elem_liberacao_timeout": "3000",
+			"elem_pos_x": "40",
+			"elem_pos_y": "50",
+			"elem_iHTML": "<p>Teste de T&iacute;tulo 4 <br> Parab&eacute;ns voc&ecirc; terminou o tutorial !</p>"
 		}
 	];
 
