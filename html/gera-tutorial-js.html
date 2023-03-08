@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>TUTORIAL</title>
+	<title>🆘 GERADOR DE TUTORIAL</title>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"
 		integrity="sha512-2rNj2KJ+D8s1ceNasTIex6z4HWyOnEYLVC3FigGOmyQCZc2eBXKgOxQmo3oKLHyfcj53uz4QMsRCWNbLd32Q1g=="
 		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -19,13 +19,21 @@
 		crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js"></script>
 </head>
-
-<body>
+<!-- OBS : Para testes, altere a cor de background e a cor do texto, ao dar destaque ele vai pegar da cor bg para dar foco ao item -->
+<!-- ex : bg-success text-warning -->
+<body class="bg- text-">
 	<div class="container">
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-12 text-center">
-					<h4>Teste tutorial</h4>
+					<div class="row">
+						<div class="col-11">
+							<h4>Teste tutorial</h4> 
+						</div>
+						<div class="col-1">
+							<button id="btnMostraTutorial" class="btn bg-primary text-white"><i class="fa-solid fa-eye"></i> TUTORIAL</button>
+						</div>
+					</div>
 					<div class="row">
 						<input name="ex_nome" id="ex_nome" placeholder="exemplo de nome" class="form-control w-75 my-2">
 						<input name="ex_email" id="ex_email" placeholder="exemplo de email"
@@ -37,7 +45,7 @@
 					</div>
 					<div class="row">
 						<div class="col-6">
-							<button class="btn bg-primary text-white"
+							<button id="btn_tst_ok" class="btn bg-primary text-white"
 								title="Bot&atilde;o de confirma&ccedil;&atilde;o">OK</button>
 						</div>
 					</div>
@@ -49,10 +57,16 @@
 
 </html>
 <script>
-	/* Função responsável por gerar um tutorial */
+	/**
+     * @description
+     *  Função responsável por criar tutoriais para sistemas web se baseando em um array pré-configurado de objetos ;
+     * @author Marcos T. L. Coelho ;
+     * @param {array} elementosDoTutorial -> array de objetos ;
+     */
 	function gerarTutorial(elementosDoTutorial) {
 		if (!elementosDoTutorial) {
 			console.log('Informe um array de items do DOM para serem usados no tutorial');
+			return false;
 		}
 
 		/* Criando arquivos HTML e CSS e os adicionando ; */
@@ -74,7 +88,6 @@
 		DIV_INSTRUTORA.style.backgroundColor = "white";
 		DIV_INSTRUTORA.style.color = "black";
 		DIV_INSTRUTORA.classList.add("mostrar");
-		DIV_INSTRUTORA.classList.add("rounded");
 		DIV_INSTRUTORA.innerHTML = "TUTORIAL";
 
 		/* Criando HTML - div para Controles */
@@ -83,11 +96,13 @@
 		DIV_CONTROLES.classList.add("mostrar");
 		DIV_CONTROLES.innerHTML = `
 			<div>
+				<!-- Input responsável por válidações nos controles, valores e atributos adicionados via js -->
+				<input type="hidden" id="inpOcultoItemAtual" >
 				<span id="spnInfoTutorial">ITEM/ITEM</span>
 			</div>
-			<div style="padding-bottom:10px;">
-				<!-- <button id="btnTutorialAnt" > ← </button> -->
-				<button id="btnTutorialProx" > → </button>
+			<div id="divBTNS" style="padding-bottom:10px;">
+				<button id="btnTutorialAnt"  class="btnControleTutorial"> ← </button> 
+				<button id="btnTutorialProx" class="btnControleTutorial"> → </button>
 			</div>
 		`;
 
@@ -144,29 +159,77 @@
 				visibility: visible;
 			}
 
-			button {
+			.btnControleTutorial {
 				border : 1px solid ;
+			}
+
+			/* Scroll Customizado */
+			/* width */
+			::-webkit-scrollbar {
+				width: 5px;
+			}
+
+			/* Track */
+			::-webkit-scrollbar-track {
+				box-shadow: inset 0 0 5px grey; 
+				border-radius: 10px;
+			}
+			
+			/* Handle */
+			::-webkit-scrollbar-thumb {
+				background: blue; 
+				border-radius: 10px;
+			}
+
+			/* Handle on hover */
+			::-webkit-scrollbar-thumb:hover {
+				background: darkblue; 
 			}
 		`;
 
-		/* Adicionando nosso HTML e CSS */
-		document.head.appendChild(CSS_ESTILOS);
-		document.body.appendChild(DIV_CORTINA);
-		document.body.appendChild(DIV_INSTRUTORA);
-		document.body.appendChild(DIV_CONTROLES);
+		/* Adicionando nosso HTML e CSS e garantindo uma única instância */
+		if(!document.getElementById("cortinaTutorial")){
+			document.head.appendChild(CSS_ESTILOS);
+			document.body.appendChild(DIV_CORTINA);
+			document.body.appendChild(DIV_INSTRUTORA);
+			document.body.appendChild(DIV_CONTROLES);
+		}
 
 		/* Total de items e iniciando o tutorial */
-		let totalDeItemsTutorial = elementosDoTutorial.length;
+		let totalDeItensTutorial = elementosDoTutorial.length;
 		let itemAtualDoTutorial = 0;
 
-		irParaItemDoTutorial(itemAtualDoTutorial, elementosDoTutorial, totalDeItemsTutorial);
+		irParaItemDoTutorial(itemAtualDoTutorial, elementosDoTutorial, totalDeItensTutorial);
+
+		/* Ouvintes */
+		/* Validando pelo inpOcultoItemAtual para garantir apenas um ouvinte nos botões de anterior e prox itens
+		 e apenas ouvinte de redimensionamento */
+		if(document.getElementById("inpOcultoItemAtual").getAttribute("jaExec") != 1){
+			/* Habilitando movimentação com as setas */
+			document.addEventListener('keyup', function(event) {
+				movimentoComSetas(event,document.getElementById("btnTutorialAnt"),document.getElementById("btnTutorialProx"));
+			});
+
+			/* Re-desenhando quando a janela é redimensionada */
+			window.addEventListener("resize",resize_debounce(function(e){
+				// Redesenhando com as proporções corretas ;
+				irParaItemDoTutorial(+(document.getElementById("inpOcultoItemAtual").value) , elementosDoTutorial, totalDeItensTutorial);
+
+				// Reescrevendo o texto do item ;
+				document.getElementById("spnInfoTutorial").textContent = 
+				`${+(document.getElementById("inpOcultoItemAtual").value) + 1} | ${totalDeItensTutorial}`;
+			}));
+		}
+
+		/* Habilitando o uso dos controles (setas) no tutorial */
+		document.getElementById("inpOcultoItemAtual").setAttribute("habControles",1);
 	}
 
 	/**
 	 * Função auxiliar para transitar entre os itens do tutorial ;
 	 */
-	function irParaItemDoTutorial(itemAtualDoTutorial, elementosDoTutorial, totalDeItemsTutorial) {
-
+	function irParaItemDoTutorial(itemAtualDoTutorial, elementosDoTutorial, totalDeItensTutorial) {
+		/* Validações */
 		if (!itemAtualDoTutorial && itemAtualDoTutorial != 0) {
 			console.log('O item atual não está definido !');
 			return false;
@@ -175,62 +238,142 @@
 			console.log('O tutorial necessita de um array de items a serem focados');
 			return false;
 		}
-		if (!totalDeItemsTutorial) {
+		if (!totalDeItensTutorial) {
 			console.log('O tutorial precisa de uma quantidade definida de items !');
 			return false;
 		}
 
+		/* Declarativas de elementos */
 		let divInstrucaoTutorial = document.getElementById("divInstrucaoTutorial");
 		let divControles = document.getElementById("divControles");
+
+		let spnInfoTutorial = document.getElementById("spnInfoTutorial");
+		let inpOcultoItemAtual = document.getElementById("inpOcultoItemAtual");
+		let divBTNS = document.getElementById("divBTNS");
+
+		// Desconstruindo botões e recriando para deletar os listeners ;
+		divBTNS.innerHTML = "";
+		divBTNS.innerHTML = `
+			<button id="btnTutorialAnt" title="Anterior"> ← </button> 
+			<button id="btnTutorialProx" title="Pr&oacute;ximo" > → </button>
+		`;
+
+		// Declarando os botões e as classes ; 
 		let btnAnt = document.getElementById("btnTutorialAnt");
 		let btnProx = document.getElementById("btnTutorialProx");
-		let spnInfoTutorial = document.getElementById("spnInfoTutorial");
 
+		btnAnt.classList.add("btnControleTutorial");
+		btnProx.classList.add("btnControleTutorial");
 
-		spnInfoTutorial.textContent = `${(1)} | ${totalDeItemsTutorial}`;
+		// Re-habilitando visibilidade de classes do tutorial ;
+		document.getElementById("cortinaTutorial").classList.add("mostrar");
+		divInstrucaoTutorial.classList.add("mostrar");
+		divControles.classList.add("mostrar");
 
-		for (let i = itemAtualDoTutorial; i < totalDeItemsTutorial; i++) {
-			if (i == itemAtualDoTutorial) {
+		// Travando btnAnt caso indice seja 0 ;
+		if(itemAtualDoTutorial == 0){
+			btnAnt.disabled = true;
+		}
+
+		// Alterando texto informando itemAtual | totalDeItensTutorial ;
+		spnInfoTutorial.textContent = `${(1)} | ${totalDeItensTutorial}`;
+
+		// Declarando o valor do input oculto = itemAtualDoTutorial ;
+		inpOcultoItemAtual.value = itemAtualDoTutorial;
+
+		/* Percorrendo os itens do tutorial ; */
+		for (let i = itemAtualDoTutorial; i < totalDeItensTutorial; i++) {
+			if (i == inpOcultoItemAtual.value) {
+
+				// Fazendo a inserção de um script js ;
+				if(elementosDoTutorial[i].elem_script !== "" && elementosDoTutorial[i].elem_script !== null){
+					let script = document.createElement('script');
+					script.innerHTML = `${elementosDoTutorial[i].elem_script}`; ;
+					document.body.appendChild(script);
+				}
 				
-				// Alterando texto do btn de prox item caso seja o item final ;
-				if(itemAtualDoTutorial == (totalDeItemsTutorial - 1)){
-					btnProx.textContent = '✔';
+				// Alterando texto do btn de próx item caso seja o item final ;
+				if(itemAtualDoTutorial == (totalDeItensTutorial - 1)){
+					btnProx.textContent = '✔ Finalizar';
+					btnProx.title = 'Finalizar o Tutorial';
 				}
 				
 				// Adicionando destaque ao item ;
-				elementosDoTutorial[i].elem.classList.add("itemTutorialVisivel");
-				elementosDoTutorial[i].elem.focus();
+				let tipoTagItem = elementosDoTutorial[i].elem.tagName ; // INPUT, DIV, H4, SPAN ...
+				let tipoItemTitularidade = "item" ;// item ou closest('div');
 
-				if (elementosDoTutorial[i].elem_clicavel == "N") {
-					elementosDoTutorial[i].elem.disabled = true;
+				/* Se o elemento não é um input considerar como divs, spans ... */
+				if(tipoTagItem != "INPUT") {
+					let corBG =  window.getComputedStyle(document.body, null).getPropertyValue('background-color');
+					
+					// É uma div ;
+					if(tipoTagItem == "DIV"){
+						elementosDoTutorial[i].elem.style.backgroundColor = (corBG == "" ? "white" : corBG);
+						elementosDoTutorial[i].elem.classList.add("itemTutorialVisivel");
+						elementosDoTutorial[i].elem.focus();
+					} else { 
+						// Não é um input e não é uma div ; 
+						tipoItemTitularidade = "div_pai";
+						elementosDoTutorial[i].elem.closest("div").style.backgroundColor = (corBG == "" ? "white" : corBG);
+						elementosDoTutorial[i].elem.closest("div").classList.add("itemTutorialVisivel");
+						elementosDoTutorial[i].elem.closest("div").focus();
+					}
+					
+				} else if(tipoTagItem == "INPUT") {
+					// Se for um input 
+					elementosDoTutorial[i].elem.classList.add("itemTutorialVisivel");
+					elementosDoTutorial[i].elem.focus();
 				}
 
+				/* Tratamento para elemento clicável = "N" */
 				if (elementosDoTutorial[i].elem_clicavel == "N") {
+					elementosDoTutorial[i].elem.disabled = true;
+					
+					// Desabilitando os botões de navegação
+					btnAnt.disabled = true ;
+					btnProx.disabled = true ;
+			
 					let tempo_liberacao = 5000;
 					if (elementosDoTutorial[i].elem_liberacao_timeout.trim() !== "" && elementosDoTutorial[i]
 						.elem_liberacao_timeout.trim() != null) {
 						tempo_liberacao = elementosDoTutorial[i].elem_liberacao_timeout;
 					}
+
+					setTimeout(()=>{
+						elementosDoTutorial[i].elem.disabled = false;
+					
+						// Habilitando os botões de navegação
+						btnAnt.disabled = false ;
+						btnProx.disabled = false ;
+
+						btnProx.click();
+					},tempo_liberacao);
 				}
 
+				/* Tratamento para innerHTML customizado do elemento */
 				if (elementosDoTutorial[i].elem_iHTML.trim() !== "") {
 					divInstrucaoTutorial.innerHTML = elementosDoTutorial[i].elem_iHTML;
 				}
 
 				/* Posicionando divInstrucaoTutorial  */
 				divInstrucaoTutorial.style.position = 'fixed';
-
 				if (elementosDoTutorial[i].elem_pos_x !== "") {
 					divInstrucaoTutorial.style.left =
 						`${Math.round((elementosDoTutorial[i].elem.getBoundingClientRect().left) + +elementosDoTutorial[i].elem_pos_x) }px`;
 				}
-
 				if (elementosDoTutorial[i].elem_pos_y !== "") {
 					divInstrucaoTutorial.style.top =
 						`${Math.round((elementosDoTutorial[i].elem.getBoundingClientRect().top) + +elementosDoTutorial[i].elem_pos_y) }px`;
 				}
-
 				divInstrucaoTutorial.style.position = 'styck';
+
+				/* Validando overflow-X/Y na divInstrucao */
+				if(elementosDoTutorial[i].inst_overflow_x == "S"){
+					divInstrucaoTutorial.style.overflowX = "scroll";
+				}
+				if(elementosDoTutorial[i].inst_overflow_y == "S"){
+					divInstrucaoTutorial.style.overflowY = "scroll";
+				}
 
 				/* Posicionando divControles  */
 				divControles.style.position = 'fixed';
@@ -239,34 +382,37 @@
 				divControles.style.width = (divInstrucaoTutorial.getBoundingClientRect().width) + 'px';
 				divControles.style.position = 'styck';
 
-				// console.log(divInstrucaoTutorial.getBoundingClientRect().top)
-				// console.log(divInstrucaoTutorial.getBoundingClientRect().left)
-
-				console.log(itemAtualDoTutorial);
-
-				// EM TESTE - 
-				/* 	btnAnt.addEventListener("click", () => {
-						// Removendo destaque ao item quando clicado ;
+				/* Navegando para o item anterior */
+				btnAnt.addEventListener("click", () => {
+					// Removendo destaque ao item ou a div_pai quando clicado no botão de próximo ;
+					if(tipoItemTitularidade == "item"){
 						elementosDoTutorial[i].elem.classList.remove("itemTutorialVisivel");
+					} else {
+						elementosDoTutorial[i].elem.closest("div").classList.remove("itemTutorialVisivel");
+					}
 
-						// Reabilitando item caso esteja desabilitado ;
-						if (elementosDoTutorial[i].elem.disabled == true && elementosDoTutorial[i].elem_clicavel ==	"N") {
-							elementosDoTutorial[i].elem.disabled = false;
-						}
+					// Reabilitando item caso esteja desabilitado ;
+					if (elementosDoTutorial[i].elem.disabled == true && elementosDoTutorial[i].elem_clicavel ==	"N") {
+						elementosDoTutorial[i].elem.disabled = false;
+					}
 
-						// Se o tamanho total de items for menor que o próximo indice de item - 1 do array de items do tutorial,
-							// focar nesse próximo elemento e efetuar recall da function   
-						if ((i > 0)) {
-							elementosDoTutorial[i - 1].elem.classList.add("itemTutorialVisivel");
-							irParaItemDoTutorial(itemAtualDoTutorial - 1, elementosDoTutorial,
-								totalDeItemsTutorial);
-							spnInfoTutorial.textContent = `${(itemAtualDoTutorial - 1 != 0) ? (itemAtualDoTutorial -1) : 1} | ${totalDeItemsTutorial}`;
-						} 
-					}); */
+					/* Se o tamanho total de items for menor que o próximo indice de item - 1 do array de items do tutorial,
+					   focar nesse próximo elemento e efetuar recall da function   */
+					if ((i >= 1)) {
+						elementosDoTutorial[i - 1].elem.classList.add("itemTutorialVisivel");
+						irParaItemDoTutorial(+(i) - 1, elementosDoTutorial, totalDeItensTutorial);
+						spnInfoTutorial.textContent = `${(itemAtualDoTutorial)} | ${totalDeItensTutorial}`;
+					} 
+				});
 
+				/* Navegando para o próximo item */
 				btnProx.addEventListener("click", () => {
-					// Removendo destaque ao item quando clicado ;
-					elementosDoTutorial[i].elem.classList.remove("itemTutorialVisivel");
+					// Removendo destaque ao item ou a div_pai quando clicado no botão de próximo ;
+					if(tipoItemTitularidade == "item"){
+						elementosDoTutorial[i].elem.classList.remove("itemTutorialVisivel");
+					} else {
+						elementosDoTutorial[i].elem.closest("div").classList.remove("itemTutorialVisivel");
+					}
 
 					// Reabilitando item caso esteja desabilitado ;
 					if (elementosDoTutorial[i].elem.disabled == true && elementosDoTutorial[i].elem_clicavel == "N") {
@@ -274,44 +420,76 @@
 					}
 
 					/* Se o tamanho total de items for menor que o próximo indice de item + 1 do array de items do tutorial,
-						 focar nesse próximo elemento e efetuar recall da function   */
-					if ((i + 1) < totalDeItemsTutorial) {
+					   focar nesse próximo elemento e efetuar recall da function   */
+					if ((i + 1) < totalDeItensTutorial) {
 						elementosDoTutorial[i + 1].elem.classList.add("itemTutorialVisivel");
-						irParaItemDoTutorial(itemAtualDoTutorial + 1, elementosDoTutorial,
-							totalDeItemsTutorial);
-						spnInfoTutorial.textContent = `${(itemAtualDoTutorial + 2)} | ${totalDeItemsTutorial}`;
+						irParaItemDoTutorial(+(i) + 1, elementosDoTutorial, totalDeItensTutorial);
+						spnInfoTutorial.textContent = `${(itemAtualDoTutorial+2)} | ${totalDeItensTutorial}`;
 					} else {
-						// Final do tutorial , esconder cortina ; 
+						// Final do tutorial , esconder cortina, instruções e controles  ; 
 						document.getElementById("cortinaTutorial").classList.remove("mostrar");
 						divInstrucaoTutorial.classList.remove("mostrar");
 						divControles.classList.remove("mostrar");
+
+						/* Validando que o tutorial já executou uma vez ou mais, evitar multiplos ouvintes */
+						inpOcultoItemAtual.setAttribute("jaExec","1");
+
+						/* Desabilitando os controles (setas) no tutorial */
+						inpOcultoItemAtual.setAttribute("habControles","0");
 					}
 				});
+			}
+			
+		}
+	}
+
+	/* Função auxiliar para transitar com as setas pelo tutorial */
+	function movimentoComSetas(event,btnAnt,btnProx) {
+		/* Validando se o controle está habilitado,	 caso seja = 0, não fará nada,
+		isso corrige o bug ao terminar tutorial e clicar nas sestas faz com que o tutorial reapareça */
+		if(document.getElementById("inpOcultoItemAtual").getAttribute("habControles") == 1){
+			// verifica se a tecla pressionada foi a seta direita
+			if (event.keyCode === 39) {
+				btnProx.click();
+			}
+			// verifica se a tecla pressionada foi a seta esquerda
+			else if (event.keyCode === 37) {
+				btnAnt.click();
 			}
 		}
 	}
 
-	// Informa quantos pixels formam a porcentagem informada na tela do usuário ;
-	function calcPixelsTelaPorPorcentagem(porcentagem, param) {
-		if (param == "w") {
-			param = screen.availWidth;
-		} else if (param == "h") {
-			param = screen.availHeight;
-		}
-		const tamanhoDisponivel = param;
-		const pixels = (porcentagem / 100) * tamanhoDisponivel;
-
-		return pixels;
+	/* Função auxiliar para gerar um delay durante o redimensionamento da janela para auxiliar o reposicionamento da divInstrutora */
+	function resize_debounce(func){
+		let timer;
+		return function(event){
+			if(timer) clearTimeout(timer);
+			timer = setTimeout(func,500,event);
+		};
 	}
 
-	// Array com os elementos que serão focados ;
-	let elementosDoTutorial = [{
+	/* Exemplo de array com os elementos que serão focados para montar um tutorial; */
+	let elementosDoTutorial = [
+		{
+			"elem": document.getElementsByTagName("h4")[0],
+			"elem_clicavel": "S",
+			"elem_liberacao_timeout": "3000",
+			"elem_pos_x": "20",
+			"elem_pos_y": "80",
+			"elem_iHTML": "<span class='bg-danger'>Tutorial</span><p>Role o tutorial para baixo ...<br> Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor autem ab hic consectetur mollitia fugiat in pariatur, enim explicabo id ipsa voluptatum animi, vitae quam similique qui nihil incidunt perferendis. Ratione obcaecati iure beatae sequi officiis. Hic ducimus quaerat molestias consequuntur sunt odit eum! Optio fugiat eum tempora fuga, sequi veritatis quo esse illum modi exercitationem velit pariatur nam voluptatibus autem a possimus atque dolor . Tenetur, labore!</p>",
+			"elem_script":"alert('Bem Vindo !')",
+			"inst_overflow_y":"S",
+			"inst_overflow_x":""
+		},{
 			"elem": document.getElementById("ex_nome"),
 			"elem_clicavel": "S",
 			"elem_liberacao_timeout": "3000",
 			"elem_pos_x": "20",
 			"elem_pos_y": "50",
-			"elem_iHTML": "<span class='bg-danger'>Tutorial</span>"
+			"elem_iHTML": "<p>Teste - T&iacute;tulo 1</p><img src='https://suaimagem.png' alt='sua imagem'>",
+			"elem_script":"",
+			"inst_overflow_y":"",
+			"inst_overflow_x":""
 		},
 		{
 			"elem": document.getElementById("ex_email"),
@@ -319,7 +497,10 @@
 			"elem_liberacao_timeout": "2000",
 			"elem_pos_x": "20",
 			"elem_pos_y": "50",
-			"elem_iHTML": "<p>Teste de T&iacute;tulo 1</p>"
+			"elem_iHTML": "<p>Teste - T&iacute;tulo 2  <br> Vai Avan&ccedil;ar sozinho em 2 seg</p>",
+			"elem_script":"",
+			"inst_overflow_y":"",
+			"inst_overflow_x":""
 		},
 		{
 			"elem": document.getElementById("ex_endereco"),
@@ -327,7 +508,10 @@
 			"elem_liberacao_timeout": "3000",
 			"elem_pos_x": "20",
 			"elem_pos_y": "50",
-			"elem_iHTML": "<p>Teste de T&iacute;tulo 2</p>"
+			"elem_iHTML": "<p>Teste - T&iacute;tulo 3 <br> Vai Avan&ccedil;ar sozinho em 3 seg</p>",
+			"elem_script":"",
+			"inst_overflow_y":"",
+			"inst_overflow_x":""
 		},
 		{
 			"elem": document.getElementById("ex_telefone"),
@@ -335,18 +519,27 @@
 			"elem_liberacao_timeout": "3000",
 			"elem_pos_x": "20",
 			"elem_pos_y": "50",
-			"elem_iHTML": "<p>Teste de T&iacute;tulo 3</p>"
+			"elem_iHTML": "<p>Teste - T&iacute;tulo 4</p>",
+			"elem_script":"",
+			"inst_overflow_y":"",
+			"inst_overflow_x":""
 		},
 		{
-			"elem": document.getElementsByTagName("button")[0],
+			"elem": document.getElementById("btn_tst_ok"),
 			"elem_clicavel": "S",
 			"elem_liberacao_timeout": "3000",
 			"elem_pos_x": "40",
 			"elem_pos_y": "50",
-			"elem_iHTML": "<p>Teste de T&iacute;tulo 4 <br> Parab&eacute;ns voc&ecirc; terminou o tutorial !</p>"
+			"elem_iHTML": "<p><b>Teste - T&iacute;tulo Final </b><br> Parab&eacute;ns voc&ecirc; terminou o tutorial !</p>",
+			"elem_script":"document.getElementById('btnTutorialProx').addEventListener('click',()=>{alert('Fim!')})",
+			"inst_overflow_y":"",
+			"inst_overflow_x":""
 		}
 	];
 
-	// Instanciando a função ;
-	gerarTutorial(elementosDoTutorial);
+	/* Instânciando a função ao clicar no botão btnMostraTutorial*/
+	document.getElementById("btnMostraTutorial").addEventListener("click",()=>{
+		gerarTutorial(elementosDoTutorial)
+	});
+
 </script>
