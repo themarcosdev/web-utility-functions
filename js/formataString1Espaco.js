@@ -23,3 +23,13 @@
 
         return retorno
     }
+
+  /**
+     Função que remove todos os espaços excedentes entre palavras , mantendo apenas 1 único espaço entre palavras (usando regex)
+     @example :
+     let texto = 'Este   é   apenas um teste    da função' ;
+    espacoUnico(texto);
+  */
+  function espacoUnico(texto){
+      return  texto.replace(/\s+/g, ' ');
+  }
