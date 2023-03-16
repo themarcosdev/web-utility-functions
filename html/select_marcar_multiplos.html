@@ -1,0 +1,152 @@
+<div style="display: flex;">
+	<div id="div_tst" style="margin: 10px;">
+		<!-- usar atributo multiple on select (te obriga a usar control para marcar vários, a função atualizaSelecionados contorna o uso de control) -->
+		<select id="meuSelect" multiple style="height: 250px;">
+			<option value="">SELECIONE</option>
+			<option value="null">NENHUM</option>
+			<option value="1">A</option>
+			<option value="2">B</option>
+			<option value="3">C</option>
+			<option value="4">D</option>
+			<option value="5">E</option>
+			<option value="6">F</option>
+			<option value="7">G</option>
+			<option value="8">H</option>
+			<option value="9">I</option>
+			<option value="10">J</option>
+		</select>
+	</div>
+	<div id="div_tst2" style="margin: 10px;">
+		<!-- usar atributo multiple on select (te obriga a usar control para marcar vários, a função atualizaSelecionados contorna o uso de control) -->
+		<select id="meuSelect2" multiple style="height: 250px;">
+			<option value="">SELECIONE</option>
+			<option value="null">NENHUM</option>
+			<option value="1">A</option>
+			<option value="2">B</option>
+			<option value="3">C</option>
+			<option value="4">D</option>
+			<option value="5">E</option>
+			<option value="6">F</option>
+			<option value="7">G</option>
+			<option value="8">H</option>
+			<option value="9">I</option>
+			<option value="10">J</option>
+		</select>
+	</div>
+</div>
+<script>
+	function habilitaMarcarMultiplos() {
+		let s = document.getElementsByTagName('select');
+		for (let i = 0; i < s.length; i++) {
+			if (s[i].multiple) {
+				s[i].onclick = atualizaSelecionados;
+			}
+		}
+	}
+
+	function atualizaSelecionados(e) {
+		let opts = this.getElementsByTagName('option'),
+			t, o;
+		if (e) {
+			e.preventDefault();
+			t = e.target;
+		} else if (window.event) {
+			window.event.returnValue = false;
+			t = window.event.srcElement;
+		} else { 
+			return;
+		}
+
+		t = e.target || window.event.srcElement;
+		if (t.className == 'selected'){ 
+			t.className = '';
+		} else { 
+			t.className = 'selected';
+		}
+
+		for (let i = 0, j = opts.length; i < j; i++) {
+			if (opts[i].className == 'selected'){
+				opts[i].selected = true;
+			} else { 
+				opts[i].selected = false;
+			}
+		}
+	}
+
+	/* Retorna as opções selecionadas de um elemento select ;*/
+	function retornaMarcadosSelect(elemento_select,propiedade,retornar_string_array){
+		if(!elemento_select){
+			return 'Informe um elemento select para retornar as opções selecionadas';
+		}
+
+		if(propiedade){
+			let array_propiedade = [];
+			for(let i = 0; i < elemento_select.selectedOptions.length ; i++){
+				if(propiedade == 'value'){
+					array_propiedade.push(elemento_select.selectedOptions[i].value);
+				}
+				if(propiedade == 'textContent'){
+					array_propiedade.push(elemento_select.selectedOptions[i].textContent);
+				}
+				if(propiedade == 'innerHTML'){
+					array_propiedade.push(elemento_select.selectedOptions[i].innerHTML);
+				} 
+			}
+
+			if(retornar_string_array == 'string'){
+				return `${array_propiedade}`;
+			} else if (retornar_string_array == 'array'){
+				return array_propiedade;
+			} 			
+		}
+
+		return elemento_select.selectedOptions ;
+	}
+
+	/* Função para garantir que items 'inválidos' em multiplicidade sejam marcados quando já houver um item marcado ; */
+	function desmarcaMultiplosItemInvalido(itensInvalidos){
+		let selects = document.getElementsByTagName('select');
+		for (let i = 0; i < selects.length; i++) {
+			if (selects[i].multiple) {
+				let options = selects[i].getElementsByTagName('option');
+				for (let j = 0; j < options.length; j++) {
+					// Ao clicar em cada opção ;
+					options[j].addEventListener("click",()=>{
+						// Caso clicar em um item inválido ; (desmarcar todos o válidos)
+						if(itensInvalidos.includes(options[j].value)){
+							setTimeout(()=>{
+								// Desmarcando todas as opções ;
+								options[j].closest("select").selectedIndex = -1;
+								for (let k = 0; k < options[j].closest("select").options.length ; k++){
+									// Zerando a classe de todos os itens ;
+									options[j].closest("select").options[k].classList = "";
+								}
+								// Definindo atributo select e .selected no item clicado ;
+								options[j].closest("select").selectedIndex = [j];
+								options[j].closest("select").options[j].classList = "selected";
+							},1);
+						}
+
+						// Caso clicar em um item válido ; (desmarcar todos os inválidos)
+						if(!itensInvalidos.includes(options[j].value)){
+							for (let k = 0; k < options[j].closest("select").options.length ; k++){
+								//Validar se o item contém .selected e está no array de item inválido (desmarcar); 
+								if(options[j].closest("select").options[k].classList == "selected" && itensInvalidos.includes(options[j].closest("select").options[k].value) ){
+									options[j].closest("select").selectedIndex = -1;
+									options[j].closest("select").options[k].classList = "";
+								}
+							}
+						}
+					});
+				}
+			}
+		}
+	}
+
+	/* Instânciando função ; */
+	habilitaMarcarMultiplos();
+
+	desmarcaMultiplosItemInvalido(["",'null']);
+
+
+</script>
