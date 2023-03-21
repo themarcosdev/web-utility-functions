@@ -31,19 +31,30 @@
 				<div id="divPrint">
 					<div class="src-preview">
 						<div class="screenshot">
-							<button id="btn-save">💾</button>
-							<button id="btn-close">❌</button>
+							<button id="btn-nwind" title="Abrir em nova Janela">↗</button>
+							<button id="btn-save" title="Salvar">💾</button>
+							<button id="btn-close" title="Fechar">❌</button>
 							<img id="imgPrintScreen" src="" alt="screenshot">
 						</div>
 					</div>
 				</div>
 			`;
 
+			let img_src = '';
+
+			// Removendo a  div caso já exista, para manter apenas um botão/listener de salvar/fechar/nova janela ... ;
+			if(document.getElementById("divPrint")){
+				document.getElementById("divPrint").remove();
+			}
+
 			if(!document.getElementById("divPrint")){
 				document.body.appendChild(divFOTO);
+			}
 
+			if(!document.getElementById("css_printscreen")){
 				// Criando CSS ;
 				const CSS_ESTILOS = document.createElement('style');
+				CSS_ESTILOS.id = "css_printscreen";
 				CSS_ESTILOS.innerHTML = `
 					.screenshot {
 						position: fixed;
@@ -77,7 +88,7 @@
 						border : 1px solid red;
 					}
 
-					#btn-close,#btn-save {
+					#btn-close,#btn-save,#btn-nwind {
 						background-color: darkblue ;
 						color : white;
 					}
@@ -93,8 +104,9 @@
 			}
 
 			const screenshotPreview = document.querySelector(".src-preview");
-			const btnSave = document.getElementById("btn-save");
-			const btnClose = document.getElementById("btn-close");
+			const btnSave 	 = document.getElementById("btn-save");
+			const btnNewWind = document.getElementById("btn-nwind");
+			const btnClose 	 = document.getElementById("btn-close");
 
 			video.addEventListener("loadedmetadata", () => {
 				const canvas = document.createElement("canvas");
@@ -111,15 +123,42 @@
 
 				// Definindo src da imagem igual ao canvas em base 64 ;
 				document.getElementById("imgPrintScreen").setAttribute("src", canvas.toDataURL());
+				img_src = canvas.toDataURL();
 				screenshotPreview.classList.add("show");
 			});
 			video.srcObject = stream; 
+
+			/* Criando uma notificação */
+			const not_print = new Notification(`🖼 PRINT`, {
+				renotify: false,
+				requireInteraction:  true ,
+				vibrate: [200, 100, 200],
+				action: `novoPrint_Act`,
+				body: `⭐ Novo print capturado, clique aqui para ver ! `,
+				icon: `${img_src}`
+			});
+
+			not_print.onclick = function () {
+				/* Foco na janela original */
+				window.parent.focus();
+				not_print.close();
+			}
 
 			btnSave.addEventListener("click", () => {
 				download(document.getElementById("imgPrintScreen").src,`print_${new Date()}`);
 				btnClose.click();
 			});
+
 			btnClose.addEventListener("click", () => screenshotPreview.classList.toggle("show"));
+
+			btnNewWind.addEventListener("click", () => {
+				let imagem = new Image();
+				imagem.src = img_src;
+
+				let w = window.open("");
+				w.document.write(imagem.outerHTML);
+				w.document.title = "🖼 Print Capturado";
+			});
 
 			/* Subfunção para download da img */
 			async function download(data) {
