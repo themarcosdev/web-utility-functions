@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<!-- REFERENCE : https://www.codingnepalweb.com/drag-and-drop-sortable-list-html-javascript/  -->
+<html lang="pt-BR" dir="ltr">
+<head>
+	<meta charset="utf-8">
+	<title>Arrasta e Solta</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+	<ul class="container-arrastavel">
+		<li class="item_arrastavel">
+			<div class="div_hash">
+				#
+			</div>
+			<div class="details">
+				<span>item_arrastavel - 1</span>
+			</div>
+			<i class="uil"></i>
+		</li>
+		<li class="item_arrastavel">
+			<div class="div_hash">
+				#
+			</div>
+			<div class="details">
+				<span>item_arrastavel - 2</span>
+			</div>
+			<i class="uil"></i>
+		</li>
+	</ul>
+	<ul class="container-arrastavel">
+		<li class="item_arrastavel">
+			<div class="div_hash">
+				#
+			</div>
+			<div class="details">
+				<span>item_arrastavel - 3</span>
+			</div>
+			<i class="uil"></i>
+		</li>
+	</ul>
+	<div class="container-arrastavel" style="display: flex;">
+		<!--  D-FLEX -->
+		<span>D_FLEX</span>
+	</div>
+</body>
+</html>
+<script>
+	function tornarArrastavel(listaArrastavel) {
+		const itens = listaArrastavel.querySelectorAll(".item_arrastavel");
+
+		itens.forEach((item_arrastavel) => {
+			item_arrastavel.draggable = true;
+			item_arrastavel.addEventListener("dragstart", () => {
+				setTimeout(() => item_arrastavel.classList.add("arrastando"), 0);
+			});
+
+			item_arrastavel.addEventListener("dragend", () => item_arrastavel.classList.remove("arrastando"));
+		});
+
+		const inicializarListaArrastavel = (e) => {
+			e.preventDefault();
+			const itemArrastando = document.querySelector(".arrastando");
+
+			let irmaos = [...listaArrastavel.querySelectorAll(".item_arrastavel:not(.arrastando)")];
+
+			let proxIrmao = irmaos.find((irmao) => {
+				return e.clientY <= irmao.offsetTop + irmao.offsetHeight / 2;
+			});
+
+			listaArrastavel.insertBefore(itemArrastando, proxIrmao);
+		};
+
+		listaArrastavel.addEventListener("dragover", inicializarListaArrastavel);
+		listaArrastavel.addEventListener("dragenter", (e) => e.preventDefault());
+	}
+
+	function habilitarArrastar(elemento_container_arrastavel){
+		const listasArrastaveis = elemento_container_arrastavel;
+
+		listasArrastaveis.forEach((listaArrastavel) => {
+			tornarArrastavel(listaArrastavel);
+		});
+	}
+
+	habilitarArrastar(document.querySelectorAll(".container-arrastavel"));
+</script>
+<style>
+	body {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 100vh;
+		background:darkblue;
+	}
+
+	.container-arrastavel {
+		width: 425px;
+		background: #fff;
+		border-radius: 7px;
+		padding: 30px 25px 20px;
+		box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+	}
+
+	.container-arrastavel .item_arrastavel {
+		list-style: none;
+		display: flex;
+		cursor: move;
+		align-items: center;
+		padding: 10px;
+		border: 1px solid #ccc;
+		justify-content: space-between;
+	}
+
+	.item_arrastavel.arrastando {
+		opacity: 0.6;
+	}
+
+	.item_arrastavel.arrastando :where(.details, i) {
+		opacity: 0;
+	}
+</style>
