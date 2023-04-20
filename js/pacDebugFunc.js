@@ -28,7 +28,7 @@
 	 * Recebe um array com nomes de funções como parâmetro rescreve e debugar funções,
 	 * sempre que uma função do array for chamada será informado quem chamou a função,
 	 *  */
-	function informeDebugFuncJS(arrayDeFuncoes) {
+	function infoDebugFuncJS(arrayDeFuncoes) {
 		arrayDeFuncoes.forEach(function (funcao) {
 			if (window[funcao]) {
 				var funcaoOriginal = window[funcao];
@@ -40,7 +40,7 @@
 						nomeInvocador = 'instância direta';
 					}
 					let nomeOrig = funcaoOriginal.name || funcao;
-					console.warn("informeDebugFuncJS : " + nomeOrig + "() foi chamada por " + nomeInvocador);
+					console.warn("infoDebugFuncJS : " + nomeOrig + "() foi chamada por " + nomeInvocador);
 					return funcaoOriginal.apply(this, arguments);
 				};
 			}
