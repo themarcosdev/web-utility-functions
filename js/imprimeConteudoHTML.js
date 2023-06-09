@@ -23,9 +23,18 @@
 						<head>
 							<title>${tituloDocumento}</title>`);
 		// Incluindo bootstrap e css na minhaNovaJanela ;
+		// Copiando todos os stylesheets atuais da minha página para a nova ;
+		let links = document.getElementsByTagName('link');
+		let stylesheets = '';
+
+		for (let i = 0; i < links.length; i++) {
+			let link = links[i];
+			if (link.rel === 'stylesheet') {
+				stylesheets += (link.outerHTML);
+			}
+		}
 		minhaNovaJanela.document.write(`
-				<link href="../includes/bootstrap/bootstrap-5.3.0.min.css" rel="stylesheet">
-				<link href="./includes/bootstrap-select/bootstrap-select.min.css" rel="stylesheet">
+				${stylesheets}
 		`);
 
 		minhaNovaJanela.document.write(` </head>
