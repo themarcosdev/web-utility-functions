@@ -89,7 +89,7 @@
   }
 
   /* ex  :
-    ./numExtenso.php?nro=999012345678999998 */
+    ./numero-por-extenso.php?nro=999012345678999998 */
 
   $numero = $_GET['nro'];
   echo $numero;
