@@ -24,7 +24,7 @@
     $dezenas = array('', '', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa');
     $centenas = array('', 'cem', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos', 'setecentos',
       'oitocentos', 'novecentos');
-    $milhares = array('', 'mil', 'milhões', 'bilhões', 'trilhões','quadrilhões','quintilhões', 'sextilhões',
+    $milhares = array('', 'mil', 'milhões', 'bilhões', 'trilhões','quatrilhões','quintilhões', 'sextilhões',
       'septilhões', 'octilhões', 'nonilhões','decilhões');
 
     $extenso = '';
@@ -77,7 +77,7 @@
     $extenso = str_replace("um milhões", 	 "um milhão", 	   $extenso);
     $extenso = str_replace("um bilhões", 	 "um bilhão", 	   $extenso);
     $extenso = str_replace("um trilhões", 	 "um trilhão", 	   $extenso);
-    $extenso = str_replace("um quadrilhões", "um quadrilhão",  $extenso);
+    $extenso = str_replace("um quatrilhões", "um quatrilhão",  $extenso);
     $extenso = str_replace("um quintilhões", "um quintilhão",  $extenso);
     $extenso = str_replace("um sextilhões",  "um sextilhão",   $extenso);
     $extenso = str_replace("um septilhões",  "um septilhão",   $extenso);
@@ -96,5 +96,5 @@
   echo "<br>";
   echo numPorExtenso($numero);
 
-  /*novecentos e noventa e nove quadrilhões, doze trilhões, trezentos e quarenta ecinco bilhões, seiscentos e setenta e
+  /*novecentos e noventa e nove quatrilhões, doze trilhões, trezentos e quarenta ecinco bilhões, seiscentos e setenta e
   oito milhões, novecentos e noventa e nove mil, novecentos e noventa e oito */
