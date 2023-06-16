@@ -3,7 +3,7 @@
   /**
    * Função para escrever um número por extenso
    * @param [number] $numero
-   * @return void
+   * @return string
    * */
   function numPorExtenso($numero)
   {
