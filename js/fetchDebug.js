@@ -35,9 +35,6 @@ window.fetch = function (url, options) {
         for (const [key, value] of options.headers.entries()) {
             headersObj[key] = value;
         }
-    }
-
-    if (options.headers && typeof options.headers === 'object' && options.headers instanceof Headers) {
         requisicao.options.headers = headersObj;
     }
 
