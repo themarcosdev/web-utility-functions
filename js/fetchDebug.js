@@ -31,7 +31,7 @@ window.fetch = function (url, options) {
 
     let headersObj = {};
 
-    if (options.headers && typeof options.headers === 'object' && options.headers instanceof Headers) {
+    if (options.headers instanceof Headers) {
         for (const [key, value] of options.headers.entries()) {
             headersObj[key] = value;
         }
@@ -89,10 +89,10 @@ window.fetch = function (url, options) {
                 retorno.invocador = invocador;
 
                 /* Faça o que quiser com o retorno | Debug ; */
-                sessionStorage.setItem('sst_retorno_rr', JSON.stringify(retorno));
                 console.log(retorno);
+                sessionStorage.setItem('sst_retorno_rr', JSON.stringify(retorno));
 
-                if (retorno.resposta.status == 401) {
+                if (retorno.resposta.status == 401 || retorno.resposta.status == 419) {
                     /* Não autorizado, recarregue a página sessão expirada no php ; */
                     window.location.reload();
                 }
