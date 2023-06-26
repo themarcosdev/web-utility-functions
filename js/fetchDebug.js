@@ -19,9 +19,11 @@ window.fetch = function (url, options) {
     try {
         throw new Error();
     } catch (e) {
-        const stack = e.stack.split('\n');
-        const caller = stack[stack.length - 1];
-        invocador = caller.trim();
+        let stack = e.stack.split('\n');
+        stack.shift();
+        stack = stack.map(item => item.trim()) ;
+        let caller = Object.assign({}, stack);
+        invocador = caller;
     }
 
 
