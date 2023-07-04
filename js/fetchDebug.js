@@ -13,7 +13,7 @@ window.fetch = function (url, options) {
     let retorno = {};
     let requisicao = {};
     let resposta = {};
-    let invocador = null;
+    let rastreio = null;
 
     /* Inicializador da função ; */
     try {
@@ -23,7 +23,7 @@ window.fetch = function (url, options) {
         stack.shift();
         stack = stack.map(item => item.trim()) ;
         let caller = Object.assign({}, stack);
-        invocador = caller;
+        rastreio = caller;
     }
 
 
@@ -88,7 +88,7 @@ window.fetch = function (url, options) {
 
                 retorno.resposta = resposta;
 
-                retorno.invocador = invocador;
+                retorno.rastreio = rastreio;
 
                 /* Faça o que quiser com o retorno | Debug ; */
                 console.log(retorno);
