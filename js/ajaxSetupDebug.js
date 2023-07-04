@@ -2,7 +2,7 @@ $.ajaxSetup({
     beforeSend: function (jqXHR, settings) {
         let retorno = {};
         let requisicao = {};
-        let invocador = null;
+        let rastreio = null;
 
         /* Inicializador da função ; */
         try {
@@ -12,7 +12,7 @@ $.ajaxSetup({
             stack.shift();
             stack = stack.map(item => item.trim()) ;
             let caller = Object.assign({}, stack);
-            invocador = caller;
+            rastreio = caller;
         }
 
         /* Intercepta a requisição aqui (Dados Enviados) ; */
@@ -51,7 +51,7 @@ $.ajaxSetup({
 
         retorno.resposta = resposta;
         retorno.requisicao = JSON.parse(sessionStorage.getItem('sst_retorno_ir')).requisicao;
-        retorno.invocador = JSON.parse(sessionStorage.getItem('sst_retorno_ir')).invocador;
+        retorno.rastreio = JSON.parse(sessionStorage.getItem('sst_retorno_ir')).rastreio;
 
         /* Faça o que quiser com o retorno | Debug ; */
         console.log(retorno);
