@@ -33,7 +33,7 @@ window.fetch = function (url, options) {
 
     let headersObj = {};
 
-    if (options.headers instanceof Headers) {
+    if (options.headers && options.headers instanceof Headers) {
         for (const [key, value] of options.headers.entries()) {
             headersObj[key] = value;
         }
