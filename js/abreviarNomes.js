@@ -54,7 +54,7 @@ function abreviarNomes(nome, tamanhoMax, reducaoAoTamMax) {
         for (let i = 0; i < tamanhoMax; i++) {
             if (i > 0 && i < tnomesabrev) {
                 if (nomeAbreviado.length > tamanhoMax) {
-                    nomeAbreviado = nomeAbreviado.replace(new RegExp(nomesAbreviados[i], 'g'), '');
+                    nomeAbreviado = nomeAbreviado.replace(/nomesAbreviados[i]/g, (i => m => !i++ ? m : '')(0));
                 }
             }
         }
