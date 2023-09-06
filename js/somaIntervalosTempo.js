@@ -17,8 +17,8 @@ function somarIntervalosDeTempo(...intervalos) {
 
 let intervalos = [
   ['2023-05-18 21:16:05', '2023-05-18 21:16:09'],
-  ['2023-05-18 21:17:13', '2023-05-18 21:16:29']
+  ['2023-05-18 21:17:13', '2023-05-18 21:17:21']
 ];
 
 let exemploTempoTotal = somarIntervalosDeTempo(...intervalos);
-console.log(exemploTempoTotal); // 20 segundos 
+console.log(exemploTempoTotal); // 12 segundos 
