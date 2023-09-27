@@ -47,7 +47,6 @@ const today = {
   }
 };
 
-/** Protection for 'monitorChanges' */
 Object.defineProperty(today, 'monitorChanges', {
   value: today.monitorChanges,
   writable: false
