@@ -46,3 +46,10 @@ let today = {
     return this._day;
   }
 };
+
+/** Protection for 'monitorChanges' */
+Object.defineProperty(today, 'monitorChanges', {
+  value: today.monitorChanges,
+  writable: false
+});
+
