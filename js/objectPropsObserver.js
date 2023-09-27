@@ -1,5 +1,5 @@
 /** Example #1 */
-let today = {};
+const today = {};
 today._year = new Date().getFullYear();
 
 Object.defineProperty(today, 'year', {
@@ -14,7 +14,7 @@ Object.defineProperty(today, 'year', {
 });
 
 /** Example #2 */
-let today = {
+const today = {
   year: new Date().getFullYear(),
   month: new Date().getMonth() + 1,
   day: new Date().getDate(),
