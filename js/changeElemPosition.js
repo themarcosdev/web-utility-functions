@@ -8,6 +8,4 @@ function changeElemPosition(elem1, elem2) {
 
     elem2.innerHTML = properties1;
     elem1.innerHTML = properties2;
-
-    console.log('Ok');
 }
