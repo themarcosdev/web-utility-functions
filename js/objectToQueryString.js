@@ -3,10 +3,10 @@ function objectToQueryString(obj) {
 
     for (let key in obj) {
         if (obj.hasOwnProperty(key)) {
-        if (queryString !== '') {
-            queryString += '&';
-        }
-        queryString += `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`;
+            if (queryString !== '') {
+                queryString += '&';
+            }
+            queryString += `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`;
         }
     }
 
