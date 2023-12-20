@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Animate Item Value</title>
+</head>
+<body>
+    <span id="item" class="item-css">99</span>
+    <br>
+    <input id="item2" type="text" class="item-css" value="45">
+    <br>
+    <span id="item3" class="item-css">1</span>
+</body>
+</html>
+<script>
+    /**
+    * Animates the value of an item over a specified duration.
+    * Parameters:
+    * - element: The HTML element whose value will be animated. It can be an input element or any other element with
+    *   text content.
+    * - duration: The duration of the animation in milliseconds.
+    * - finalValue: The final value that the element's value will reach after the animation.(positive or negative)
+    **/
+    function animateItemValue(element, duration, finalValue) {
+        if (!element?.tagName) {
+            return false;
+        }
+
+        let startValue = null ;
+        if (element.tagName  == 'INPUT') {
+            startValue = parseInt(element?.value) ?? 0;
+        } else {
+            startValue = parseInt(element?.textContent) ?? 0;
+        }
+
+        if (startValue == finalValue) {
+            startValue = 0 ;
+        }
+
+        const startTime = performance.now();
+
+        function updateValue(timestamp) {
+            const elapsedTime = timestamp - startTime;
+            const progress = Math.min(elapsedTime / duration, 1);
+            const animatedValue = Math.round(
+                startValue + (finalValue - startValue) * progress
+            );
+
+            if (element.tagName  == 'INPUT') {
+                element.value = animatedValue;
+            } else {
+                element.textContent = animatedValue;
+            }
+
+            if (progress < 1) {
+                requestAnimationFrame(updateValue);
+            }
+        }
+
+        requestAnimationFrame(updateValue);
+    }
+
+    /**
+     * @example : 
+     * */
+    window.addEventListener('DOMContentLoaded', ()=>{
+        animateItemValue(document.getElementById("item"), 1000, 999);
+        animateItemValue(document.getElementById("item2"), 1000, 45);
+        animateItemValue(document.getElementById("item3"), 1000, 300);
+    });
+</script>
+<style>
+    .item-css {
+        font-size: 20px;
+        font-weight: bold;
+    }
+</style>
