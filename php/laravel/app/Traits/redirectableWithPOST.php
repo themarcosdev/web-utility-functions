@@ -21,11 +21,11 @@ trait RequestUtilities
         *  
         *     public function yourMethod()
         *     {
-        *          return RequestUtilities::redirectWithPOST('your-route', $request->input());
+        *          return RequestUtilities::redirectableWithPOST('your-route', $request->input());
         *     }
         *  }
      */
-    public static function redirectWithPOST($route, $data, $postToken)
+    public static function redirectableWithPOST($route, $data, $postToken)
     {
         $token  = session('_token') ?? $postToken;
         $inputs = '';
