@@ -385,3 +385,220 @@ function sumColumnsInTableHTML(table, indexGroupingColumnName, indexSumColumn) {
 
     return counts;
 }
+
+function tableSelect(table, useInternalFuncions) {
+    if (!table || table.nodeName != 'TABLE') {
+        return false;
+    }
+
+    let tableIdGen = 'tableIdGen' + Math.floor(Math.random() * 10000) + '_' + new Date().getTime();
+    if (!table.id) {
+        table.id = tableIdGen;
+    } else {
+        tableIdGen = table.id;
+    }
+
+    let acceptMultiple = false;
+    let onSelectAOptionFunction = null ;
+
+    const checkItemsValidations = function(acceptMultiple){
+        for (let item of document.getElementById(tableIdGen).querySelectorAll('.ck_order')) {
+            item.addEventListener('click', function(){
+                validationMultiples(acceptMultiple, item);
+            });
+        }
+
+        for (let item of document.getElementsByClassName('table_select_opt')) {
+            item.addEventListener('click', ()=>{
+                for (let o_item of document.getElementsByClassName('table_select_opt')) {
+                    o_item.classList.remove('bg-primary');
+                    o_item.classList.remove('text-white');
+                }
+
+                item.querySelector('.ck_order').click();
+                
+                item.classList.add('bg-primary');
+                item.classList.add('text-white');
+
+                if (onSelectAOptionFunction) {
+                    onSelectAOption(onSelectAOptionFunction[0], onSelectAOptionFunction[1]);
+                }
+            });
+        }
+    }
+    checkItemsValidations(acceptMultiple);
+    
+    const createOptionsTable = function(table, options, propsToRename){
+        if (!options) {
+            return false;
+        }
+
+        if (propsToRename && !Array.isArray(propsToRename)) {
+            return false;
+        }
+
+        if (propsToRename) {
+            options = renameJsonProps(options, propsToRename);
+        }
+        
+        let newHTMLTable = '';
+        for (let option of options) {
+            if (option.value && option.text) {
+                newHTMLTable += `
+                    <tr class="table_select_opt">
+                        <td class="d-none">
+                            <input type="checkbox" id="st_op_${option.value}"
+                                value="${option.value}" class="ck_order">
+                        </td>
+                        <td>
+                            ${option.text}
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        insertNewLineInTable(
+            table,
+            table.getElementsByTagName('tr')[table.getElementsByTagName('tr').length - 1],
+            +1,
+            newHTMLTable
+        );
+
+        checkItemsValidations(acceptMultiple);
+    }
+
+    const enableSearchOnTable = function(){
+        document.getElementById('inpSearchTableId').addEventListener('keyup', function(ev){
+            hideTableLinesPerColumnsSearch(document.getElementById(tableIdGen), 2, ev.target.value);
+        })
+    }
+    enableSearchOnTable();
+
+    const getAllOptions = function() {
+        let options = [];
+
+        for (let item of document.getElementById(tableIdGen).querySelectorAll('.ck_order')) {
+            options.push(item);
+        }
+
+        return options;
+    }
+
+    const getCheckedItemsTable = function(param){
+        if (!['textContent', 'value'].includes(param)) {
+            return 'Invalid param';
+        }
+
+        let selectedOptions = [];
+        for (let item of document.getElementById(tableIdGen).querySelectorAll('input:checked')){
+            if (param == 'textContent') {
+                selectedOptions.push(item.parentElement.nextElementSibling.textContent.trim());
+            } else {
+                selectedOptions.push(item.value.trim());
+            }
+        }
+
+        return selectedOptions;
+    }
+    
+    const loadItemsAsCheckedOnTable = function(table, arrayCheckedItens) {
+        if (!table || table.nodeName != 'TABLE') {
+            return false;
+        }
+
+        let selectedItensArray = [];
+        for (let option of document.querySelectorAll(`#${table.id} input`)){
+            option.checked = false;
+            for (let item of arrayCheckedItens) {
+                if (option.value == item && !selectedItensArray.includes(option.value)) {
+                    selectedItensArray.push(option.value);
+                    option.checked = true;
+                    option.closest('.table_select_opt').click();
+                }
+            }
+        }
+    }
+
+    const lockCheckItemOnTable = function(item){
+        item.addEventListener('click', (ev)=>{
+            ev.preventDefault();
+
+            item.checked = false;
+            setTimeout(()=>{
+                item.closest('tr').classList.remove('bg-primary');
+                item.closest('tr').classList.remove('text-white');
+            }, 10);
+
+            if (getCheckedItemsTable().includes(item.value)){
+                // To define what to do ...
+                // create a unlockCheckItemOnTable (remove listener);
+            }
+        })
+    }
+
+    const onSelectAOption = function(onSelectAOptionFunction) {
+        onSelectAOptionFunction[0](onSelectAOptionFunction[1]);
+    }
+
+    const removeOptionPerOptionId = function(optionId) {
+        document.getElementById(`st_op_${optionId}`).closest('tr').remove();
+    }
+
+
+    /**
+     * Generates a new array of JSON objects with renamed properties.
+     *
+     * @param {Array} jsonArray - The array of JSON objects to be modified.
+     * @param {Array} renameArray - The array of objects containing the rename mappings.
+     * @return {Array} The modified array of JSON objects with renamed properties.
+     * @example : 
+        *  const jsonArray = [{ teste: 'marcos', pesox: 70 }, { teste: 'paulo', pesox: 79 }];
+        *  const renameArray = [{ teste: 'nome' }, { pesox: 'peso' }];
+     * @output : 
+        [
+            { nome: 'marcos', peso: 70 },
+            { nome: 'paulo', peso: 79 }
+        ]
+     */
+    const renameJsonProps = function(jsonArray, renameArray) {
+        return jsonArray.map((jsonObj) => {
+            return renameArray.reduce((acc, renameObj) => {
+            const [propOnJson, newPropName] = Object.entries(renameObj)[0];
+            acc[newPropName] = jsonObj[propOnJson];
+            return acc;
+            }, {});
+        });
+    }
+
+    const validationMultiples = function(acceptMultiple, checkingItem) {
+        if (!acceptMultiple) {
+            for (let item of document.getElementById(tableIdGen).querySelectorAll('.ck_order')) {
+                if (item != checkingItem) {
+                    item.checked = false;
+                } else {
+                    item.checked = true;
+                }
+            }
+        }
+    }
+
+    if (useInternalFuncions) {
+        return {
+            acceptMultiple,
+            onSelectAOptionFunction,
+            table,
+            useInternalFuncions,
+            checkItemsValidations,
+            createOptionsTable,
+            enableSearchOnTable,
+            getAllOptions,
+            getCheckedItemsTable,
+            loadItemsAsCheckedOnTable,
+            lockCheckItemOnTable,
+            onSelectAOption,
+            removeOptionPerOptionId,
+            renameJsonProps
+        };
+    }
+}
