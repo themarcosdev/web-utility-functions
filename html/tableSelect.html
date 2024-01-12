@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Table</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/tableFuncions.js"></script>
+</head>
+<body>
+    <div class="container-fluid p-5">
+        <div class="row my-2">
+            <div class="col-12">
+                <!-- SELECT INSIDE FORM -->
+                <div class="form-a border p-1">
+                    <div class="table-responsive overflow-y-scroll h-50" style="max-height: 200px;">
+                        <label for="inpSearchTableId" class="fw-bold mx-1">Filter:</label>
+                        <input type="search" id="inpSearchTableId" class="form-control" placeholder="Filter">
+                        <table  class="table table-bordered" aria-describedby="tableMain">
+                            <thead>
+                                <th>OPTIONS</th>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    const tableSelectControl = tableSelect(document.getElementsByTagName('table')[0], true);
+
+    /** Creating a option using key_value transformation using createOptionsTable|renameJsonProps */
+    tableSelectControl.createOptionsTable(tableSelectControl.table,
+        [{val: 1, name: '1 OPTION'},{val: 2, name: '2 OPTION'}, {val: 3, name: '3 OPTION'}],
+        [{val: 'value'}, {name: 'text'}] // wrong keys ('val' and 'name') | correct keys ('value' and 'text');
+    );
+    
+    tableSelectControl.loadItemsAsCheckedOnTable(tableSelectControl.table, [2]);
+
+    tableSelectControl.onSelectAOptionFunction = [function(item) {
+        console.log(item);
+    }, tableSelectControl.item ?? 'zz'] // working at ...
+
+</script>
