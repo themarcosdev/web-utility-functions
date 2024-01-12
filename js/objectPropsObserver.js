@@ -13,13 +13,13 @@ Object.defineProperty(today, 'year', {
   }
 });
 
-/** Example #2  - USEFUL */
+/** Example #2  - USEFUL : Try alter the values from object today, ex : today.day = 'abc' ... */
 const today = {
   year: new Date().getFullYear(),
   month: new Date().getMonth() + 1,
   day: new Date().getDate(),
   _monitorChanges: function(property, oldValue, newValue) {
-    console.log(`The property ${property} has been changed. Old value: ${oldValue}. New value: ${newValue}.`);
+    console.log(`The property ${property} has been changed.\nOld value: ${oldValue}.\nNew value: ${newValue}.`);
   },
   set year(value) {
     const oldValue = this.year;
