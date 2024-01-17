@@ -386,7 +386,7 @@ function sumColumnsInTableHTML(table, indexGroupingColumnName, indexSumColumn) {
     return counts;
 }
 
-function tableSelect(table, useInternalFuncions) {
+function tableSelect(table, useInternalFuncions, onItemClickFunction = null) {
     if (!table || table.nodeName != 'TABLE') {
         return false;
     }
@@ -398,11 +398,10 @@ function tableSelect(table, useInternalFuncions) {
         tableIdGen = table.id;
     }
 
-    let acceptMultiple = false;
-    let onSelectAOptionFunction = null ;
+    let acceptMultiple = true;
 
     const checkItemsValidations = function(acceptMultiple){
-        for (let item of document.getElementById(tableIdGen).querySelectorAll('.ck_order')) {
+        for (let item of document.getElementById(tableIdGen).querySelectorAll('.table_select_opt')) {
             item.addEventListener('click', function(){
                 validationMultiples(acceptMultiple, item);
             });
@@ -410,19 +409,28 @@ function tableSelect(table, useInternalFuncions) {
 
         for (let item of document.getElementsByClassName('table_select_opt')) {
             item.addEventListener('click', ()=>{
+                if (item.getAttribute('checked') == 'false') {
+                    item.setAttribute('checked', true);
+                } else {
+                    item.setAttribute('checked', false);
+                }
+
                 for (let o_item of document.getElementsByClassName('table_select_opt')) {
-                    o_item.classList.remove('bg-primary');
-                    o_item.classList.remove('text-white');
+                    if (o_item.getAttribute('checked') == 'false') {
+                        o_item.classList.remove('bg-primary');
+                        o_item.classList.remove('text-white');
+                    }
                 }
 
-                item.querySelector('.ck_order').click();
+                if (item.getAttribute('checked') == 'true') {
+                    item.classList.add('bg-primary');
+                    item.classList.add('text-white');
+                }
                 
-                item.classList.add('bg-primary');
-                item.classList.add('text-white');
-
-                if (onSelectAOptionFunction) {
-                    onSelectAOption(onSelectAOptionFunction[0], onSelectAOptionFunction[1]);
+                if (onItemClickFunction && typeof onItemClickFunction == 'function') {
+                    onSelectAOption(item);
                 }
+
             });
         }
     }
@@ -445,11 +453,8 @@ function tableSelect(table, useInternalFuncions) {
         for (let option of options) {
             if (option.value && option.text) {
                 newHTMLTable += `
-                    <tr class="table_select_opt">
-                        <td class="d-none">
-                            <input type="checkbox" id="st_op_${option.value}"
-                                value="${option.value}" class="ck_order">
-                        </td>
+                    <tr class="table_select_opt" id="st_op_${option.value}" value="${option.value}"
+                        checked="false">
                         <td>
                             ${option.text}
                         </td>
@@ -478,7 +483,7 @@ function tableSelect(table, useInternalFuncions) {
     const getAllOptions = function() {
         let options = [];
 
-        for (let item of document.getElementById(tableIdGen).querySelectorAll('.ck_order')) {
+        for (let item of document.getElementById(tableIdGen).querySelectorAll('.table_select_opt')) {
             options.push(item);
         }
 
@@ -491,11 +496,11 @@ function tableSelect(table, useInternalFuncions) {
         }
 
         let selectedOptions = [];
-        for (let item of document.getElementById(tableIdGen).querySelectorAll('input:checked')){
+        for (let item of document.getElementById(tableIdGen).querySelectorAll('.table_select_opt[checked=true]')){
             if (param == 'textContent') {
-                selectedOptions.push(item.parentElement.nextElementSibling.textContent.trim());
+                selectedOptions.push(item.getElementsByTagName('td')[0].textContent.trim());
             } else {
-                selectedOptions.push(item.value.trim());
+                selectedOptions.push(item.getAttribute('value').trim());
             }
         }
 
@@ -524,10 +529,10 @@ function tableSelect(table, useInternalFuncions) {
         item.addEventListener('click', (ev)=>{
             ev.preventDefault();
 
-            item.checked = false;
+            item.setAttribute('checked', false);
             setTimeout(()=>{
-                item.closest('tr').classList.remove('bg-primary');
-                item.closest('tr').classList.remove('text-white');
+                item.classList.remove('bg-primary');
+                item.classList.remove('text-white');
             }, 10);
 
             if (getCheckedItemsTable().includes(item.value)){
@@ -537,12 +542,12 @@ function tableSelect(table, useInternalFuncions) {
         })
     }
 
-    const onSelectAOption = function(onSelectAOptionFunction) {
-        onSelectAOptionFunction[0](onSelectAOptionFunction[1]);
+    const onSelectAOption = function(item) {
+        return onItemClickFunction(item);
     }
 
     const removeOptionPerOptionId = function(optionId) {
-        document.getElementById(`st_op_${optionId}`).closest('tr').remove();
+        document.getElementById(`st_op_${optionId}`).remove();
     }
 
 
@@ -573,11 +578,11 @@ function tableSelect(table, useInternalFuncions) {
 
     const validationMultiples = function(acceptMultiple, checkingItem) {
         if (!acceptMultiple) {
-            for (let item of document.getElementById(tableIdGen).querySelectorAll('.ck_order')) {
+            for (let item of document.getElementById(tableIdGen).querySelectorAll('.table_select_opt')) {
                 if (item != checkingItem) {
-                    item.checked = false;
+                    item.setAttribute('checked', false);
                 } else {
-                    item.checked = true;
+                    item.setAttribute('checked', true);
                 }
             }
         }
@@ -586,7 +591,7 @@ function tableSelect(table, useInternalFuncions) {
     if (useInternalFuncions) {
         return {
             acceptMultiple,
-            onSelectAOptionFunction,
+            onItemClickFunction,
             table,
             useInternalFuncions,
             checkItemsValidations,
