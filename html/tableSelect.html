@@ -32,18 +32,27 @@
 </body>
 </html>
 <script>
-    const tableSelectControl = tableSelect(document.getElementsByTagName('table')[0], true);
+    let exampleConfigs = {};
+    exampleConfigs.table = document.getElementsByTagName('table')[0];
+    exampleConfigs.useInternalFunctions = true;
+    exampleConfigs.acceptMultiple = false;
+    exampleConfigs.maxSelectOptions = 3;
+    exampleConfigs.onItemClickFunction = function (item) {
+        console.log('Selected Item: ', item);
+    }
+
+    const tableSelectControl = tableSelect(exampleConfigs.table, exampleConfigs.useInternalFunctions,
+        exampleConfigs.acceptMultiple, exampleConfigs.maxSelectOptions, exampleConfigs.onItemClickFunction);
 
     /** Creating a option using key_value transformation using createOptionsTable|renameJsonProps */
     tableSelectControl.createOptionsTable(tableSelectControl.table,
-        [{val: 1, name: '1 OPTION'},{val: 2, name: '2 OPTION'}, {val: 3, name: '3 OPTION'}],
+        [{val: 1, name: '1 OPTION'},{val: 2, name: '2 OPTION'}, {val: 3, name: 'LOCK OPT'}, {val: 4, name: '4 OPTION'}],
         [{val: 'value'}, {name: 'text'}] // wrong keys ('val' and 'name') | correct keys ('value' and 'text');
     );
     
-    tableSelectControl.loadItemsAsCheckedOnTable(tableSelectControl.table, [2]);
+    tableSelectControl.loadItemsAsCheckedOnTable(tableSelectControl.table, [1, 4]);
 
-    tableSelectControl.onSelectAOptionFunction = [function(item) {
-        console.log(item);
-    }, tableSelectControl.item ?? 'zz'] // working at ...
+    /** Locking a option */
+    tableSelectControl.lockCheckItemOnTable(tableSelectControl.getAllOptions()[2]);
 
 </script>
