@@ -475,7 +475,7 @@ function tableSelect(table, useInternalFuncions, onItemClickFunction = null) {
 
     const enableSearchOnTable = function(){
         document.getElementById('inpSearchTableId').addEventListener('keyup', function(ev){
-            hideTableLinesPerColumnsSearch(document.getElementById(tableIdGen), 2, ev.target.value);
+            hideTableLinesPerColumnsSearch(document.getElementById(tableIdGen), 1, ev.target.value);
         })
     }
     enableSearchOnTable();
