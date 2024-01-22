@@ -386,7 +386,7 @@ function sumColumnsInTableHTML(table, indexGroupingColumnName, indexSumColumn) {
     return counts;
 }
 
-function tableSelect(table, useInternalFuncions, onItemClickFunction = null) {
+function tableSelect(table, useInternalFuncions, acceptMultiple, maxSelectedOptions,  onItemClickFunction = null) {
     if (!table || table.nodeName != 'TABLE') {
         return false;
     }
@@ -398,40 +398,44 @@ function tableSelect(table, useInternalFuncions, onItemClickFunction = null) {
         tableIdGen = table.id;
     }
 
-    let acceptMultiple = true;
-
     const checkItemsValidations = function(acceptMultiple){
-        for (let item of document.getElementById(tableIdGen).querySelectorAll('.table_select_opt')) {
-            item.addEventListener('click', function(){
-                validationMultiples(acceptMultiple, item);
-            });
-        }
-
         for (let item of document.getElementsByClassName('table_select_opt')) {
-            item.addEventListener('click', ()=>{
-                if (item.getAttribute('checked') == 'false') {
-                    item.setAttribute('checked', true);
-                } else {
-                    item.setAttribute('checked', false);
-                }
-
-                for (let o_item of document.getElementsByClassName('table_select_opt')) {
-                    if (o_item.getAttribute('checked') == 'false') {
-                        o_item.classList.remove('bg-primary');
-                        o_item.classList.remove('text-white');
+            if (item.getAttribute('listener') == '0') {
+                item.addEventListener('click', ()=>{
+                    if ((!acceptMultiple && getCheckedItemsTable('value').length > 0)) {
+                        for (let o_item of document.getElementsByClassName('table_select_opt')) {
+                            o_item.setAttribute('checked', false);
+                            o_item.classList.remove('bg-primary');
+                            o_item.classList.remove('text-white');
+                        }
                     }
-                }
 
-                if (item.getAttribute('checked') == 'true') {
-                    item.classList.add('bg-primary');
-                    item.classList.add('text-white');
-                }
-                
-                if (onItemClickFunction && typeof onItemClickFunction == 'function') {
-                    onSelectAOption(item);
-                }
+                    if (item.getAttribute('checked') == 'false' &&
+                        getCheckedItemsTable('value').length < maxSelectedOptions) {
+                        item.setAttribute('checked', true);
+                    } else {
+                        item.setAttribute('checked', false);
+                    }
 
-            });
+                    for (let o_item of document.getElementsByClassName('table_select_opt')) {
+                        if (o_item.getAttribute('checked') == 'false') {
+                            o_item.classList.remove('bg-primary');
+                            o_item.classList.remove('text-white');
+                        }
+                    }
+
+                    if (item.getAttribute('checked') == 'true') {
+                        item.classList.add('bg-primary');
+                        item.classList.add('text-white');
+                    }
+                    
+                    if (onItemClickFunction && typeof onItemClickFunction == 'function') {
+                        onSelectAOption(item);
+                    }
+
+                });
+                item.setAttribute('listener', '1');
+            }
         }
     }
     checkItemsValidations(acceptMultiple);
@@ -454,7 +458,7 @@ function tableSelect(table, useInternalFuncions, onItemClickFunction = null) {
             if (option.value && option.text) {
                 newHTMLTable += `
                     <tr class="table_select_opt" id="st_op_${option.value}" value="${option.value}"
-                        checked="false">
+                        checked="false" listener="0">
                         <td>
                             ${option.text}
                         </td>
@@ -507,19 +511,18 @@ function tableSelect(table, useInternalFuncions, onItemClickFunction = null) {
         return selectedOptions;
     }
     
-    const loadItemsAsCheckedOnTable = function(table, arrayCheckedItens) {
+    const loadItemsAsCheckedOnTable = function(table, arrayCheckedItensIds) {
         if (!table || table.nodeName != 'TABLE') {
             return false;
         }
 
         let selectedItensArray = [];
-        for (let option of document.querySelectorAll(`#${table.id} input`)){
-            option.checked = false;
-            for (let item of arrayCheckedItens) {
-                if (option.value == item && !selectedItensArray.includes(option.value)) {
-                    selectedItensArray.push(option.value);
-                    option.checked = true;
-                    option.closest('.table_select_opt').click();
+        for (let option of document.querySelectorAll('.table_select_opt')){
+            option.setAttribute('checked', false);
+            for (let item of arrayCheckedItensIds) {
+                if (option.getAttribute('value') == item && !selectedItensArray.includes(option.getAttribute('value'))){
+                    selectedItensArray.push(option.getAttribute('value'));
+                    option.click();
                 }
             }
         }
@@ -547,7 +550,7 @@ function tableSelect(table, useInternalFuncions, onItemClickFunction = null) {
     }
 
     const removeOptionPerOptionId = function(optionId) {
-        document.getElementById(`st_op_${optionId}`).remove();
+        document.getElementById(`st_op_${optionId}`)?.remove();
     }
 
 
@@ -576,21 +579,10 @@ function tableSelect(table, useInternalFuncions, onItemClickFunction = null) {
         });
     }
 
-    const validationMultiples = function(acceptMultiple, checkingItem) {
-        if (!acceptMultiple) {
-            for (let item of document.getElementById(tableIdGen).querySelectorAll('.table_select_opt')) {
-                if (item != checkingItem) {
-                    item.setAttribute('checked', false);
-                } else {
-                    item.setAttribute('checked', true);
-                }
-            }
-        }
-    }
-
     if (useInternalFuncions) {
         return {
             acceptMultiple,
+            maxSelectedOptions,
             onItemClickFunction,
             table,
             useInternalFuncions,
