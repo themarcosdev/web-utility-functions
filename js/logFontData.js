@@ -5,10 +5,10 @@ async function logFontData() {
 		for (const fontData of availableFonts) {
 			res.push(
 				{
-				postscriptName : fontData.postscriptName,
-				fullName       : fontData.fullName,
-				family         : fontData.family,
-				script         : fontData.script
+					postscriptName : fontData.postscriptName,
+					fullName       : fontData.fullName,
+					family         : fontData.family,
+					script         : fontData.script
 				}
 			);
 		}
