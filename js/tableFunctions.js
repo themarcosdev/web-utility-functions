@@ -66,7 +66,6 @@ function accordionTableBtnListenerClick(btnClass){
     }
 }
 
-
 /**
  * Creates a new line at the top of a table.
  *
@@ -216,10 +215,8 @@ function hideTableLinesPerColumnsSearch(table, columnIndex, valueSearched) {
         selectIndex = `td:nth-child(${columnIndex})`;
     }
 
-    console.log(selectIndex);
     const cells = table.querySelectorAll(`${selectIndex}`);
 
-    console.log(cells);
     for (let cell of cells){
         cell.parentElement.classList.remove('d-none');
         if (valueSearched == '<-- show all -->') {
@@ -386,7 +383,8 @@ function sumColumnsInTableHTML(table, indexGroupingColumnName, indexSumColumn) {
     return counts;
 }
 
-function tableSelect(table, useInternalFuncions, acceptMultiple, maxSelectedOptions,  onItemClickFunction = null) {
+function tableSelect(table, useInternalFuncions, acceptMultiple, maxSelectedOptions,  onItemClickFunction = null,
+    onClickRegisterTime = 'later') {
     if (!table || table.nodeName != 'TABLE') {
         return false;
     }
@@ -398,10 +396,19 @@ function tableSelect(table, useInternalFuncions, acceptMultiple, maxSelectedOpti
         tableIdGen = table.id;
     }
 
+    if (!['before', 'later'].includes(onClickRegisterTime)) {
+        onClickRegisterTime = 'later';
+    }
+
     const checkItemsValidations = function(acceptMultiple){
         for (let item of document.getElementsByClassName('table_select_opt')) {
-            if (item.getAttribute('listener') == '0') {
+            if (item.getAttribute('listener') == 'N') {
                 item.addEventListener('click', ()=>{
+                    if (onClickRegisterTime == 'before' && onItemClickFunction &&
+                        typeof onItemClickFunction == 'function') {
+                        onSelectAOption(item);
+                    }
+
                     if ((!acceptMultiple && getCheckedItemsTable('value').length > 0)) {
                         for (let o_item of document.getElementsByClassName('table_select_opt')) {
                             o_item.setAttribute('checked', false);
@@ -410,8 +417,20 @@ function tableSelect(table, useInternalFuncions, acceptMultiple, maxSelectedOpti
                         }
                     }
 
+                    let parentNumber = +item.getAttribute('parentgroup') ?? 0;
+                    let parent = document.getElementById(`st_op_${parentNumber}`);
+                    
+                    let actualNumberSonsParent = document.querySelectorAll(
+                        `[parentgroup="${parentNumber}"][checked="true"]`).length;
+                    let totalNumberSonsParent =  0;
+
+                    if (parent && parent.getAttribute('group-max')) {
+                        totalNumberSonsParent = +parent.getAttribute('group-max');
+                    }
+
                     if (item.getAttribute('checked') == 'false' &&
-                        getCheckedItemsTable('value').length < maxSelectedOptions) {
+                        getCheckedItemsTable('value').length < maxSelectedOptions &&
+                        actualNumberSonsParent < totalNumberSonsParent) {
                         item.setAttribute('checked', true);
                     } else {
                         item.setAttribute('checked', false);
@@ -429,12 +448,13 @@ function tableSelect(table, useInternalFuncions, acceptMultiple, maxSelectedOpti
                         item.classList.add('text-white');
                     }
                     
-                    if (onItemClickFunction && typeof onItemClickFunction == 'function') {
+                    if (onClickRegisterTime == 'later' && onItemClickFunction &&
+                        typeof onItemClickFunction == 'function') {
                         onSelectAOption(item);
                     }
 
                 });
-                item.setAttribute('listener', '1');
+                item.setAttribute('listener', 'Y');
             }
         }
     }
@@ -454,11 +474,37 @@ function tableSelect(table, useInternalFuncions, acceptMultiple, maxSelectedOpti
         }
         
         let newHTMLTable = '';
+        let itemsTypeOptGroup = [];
+        let groupClass = '';
+        let maxSelectedOptions = '';
+        let htmlTokenSearch = '';
         for (let option of options) {
             if (option.value && option.text) {
+                if (option.type == "group") {
+                    itemsTypeOptGroup.push(option.value);
+                    groupClass = 'fw-bold text-secondary low-gray';
+                } else {
+                    groupClass = '';
+                }
+
+                if (option.type == "group") {
+                    maxSelectedOptions = option.maxSelectOptions;
+                } else {
+                    maxSelectedOptions = 0;
+                }
+
+                if (option.searchGroup) {
+                    htmlTokenSearch = `tokenSearch='${option.searchGroup ?? ''}'`;
+                } else {
+                    htmlTokenSearch = '';
+                }
+                
                 newHTMLTable += `
-                    <tr class="table_select_opt" id="st_op_${option.value}" value="${option.value}"
-                        checked="false" listener="0">
+                    ${option.type == "group" ? '<hr>' : ''}
+                    <tr id="st_op_${option.value}" value="${option.value}"
+                        class="table_select_opt ${groupClass}"
+                        type="${option.type}" checked="false" listener="N" parentGroup="${option.parent}"
+                        group-max="${maxSelectedOptions}" ${htmlTokenSearch}>
                         <td>
                             ${option.text}
                         </td>
@@ -475,11 +521,15 @@ function tableSelect(table, useInternalFuncions, acceptMultiple, maxSelectedOpti
         );
 
         checkItemsValidations(acceptMultiple);
+
+        for (let item of itemsTypeOptGroup) {
+            lockCheckItemOnTable(document.getElementById('st_op_' + item));
+        }
     }
 
     const enableSearchOnTable = function(){
         document.getElementById('inpSearchTableId').addEventListener('keyup', function(ev){
-            hideTableLinesPerColumnsSearch(document.getElementById(tableIdGen), 1, ev.target.value);
+            hideTableLinesTableSelect(document.getElementById(tableIdGen), 1, ev.target.value);
         })
     }
     enableSearchOnTable();
@@ -495,20 +545,120 @@ function tableSelect(table, useInternalFuncions, acceptMultiple, maxSelectedOpti
     }
 
     const getCheckedItemsTable = function(param){
-        if (!['textContent', 'value'].includes(param)) {
-            return 'Invalid param';
+        if (!['textContent', 'value', 'tr'].includes(param)) {
+            return 'Invalid param, use: textContent, value or tr';
         }
 
         let selectedOptions = [];
         for (let item of document.getElementById(tableIdGen).querySelectorAll('.table_select_opt[checked=true]')){
             if (param == 'textContent') {
                 selectedOptions.push(item.getElementsByTagName('td')[0].textContent.trim());
-            } else {
+            } else if (param == 'value') {
                 selectedOptions.push(item.getAttribute('value').trim());
+            } else {
+                selectedOptions.push(item);
             }
         }
 
         return selectedOptions;
+    }
+
+    const getJsonRelationalFamily = function (param, justCheckedItems) {
+        if (!['textContent', 'value', 'tr'].includes(param)) {
+            return 'Invalid param, use: textContent, value or tr';
+        }
+        let res = [];
+
+        let qS = null;
+
+        if (justCheckedItems) {
+            qS = '.table_select_opt[checked=true]';
+        } else {
+            qS = '.table_select_opt';
+        }
+
+        for (let item of document.getElementById(tableIdGen).querySelectorAll(qS)){
+            if (item.getAttribute('parentgroup')) {
+                let selectionParent = null;
+                let selectionSon    = null;
+                let subJson = {};
+
+                selectionParent = document.getElementById('st_op_' + item.getAttribute('parentgroup')) ?? null;
+                if (param == 'tr') {
+                    selectionSon = item;
+                } else if (param == 'textContent') {
+                    selectionParent = selectionParent?.getElementsByTagName('td')[0].textContent.trim() ?? null;
+                    selectionSon = item.getElementsByTagName('td')[0].textContent.trim();
+                } else {
+                    selectionParent = selectionParent?.getAttribute('value').trim() ?? null;
+                    selectionSon = item.getAttribute('value').trim();
+                }
+
+                subJson['parent'] = selectionParent;
+                subJson['son']    = selectionSon;
+                res.push(subJson);
+            }
+        }
+
+        return res;
+    }
+
+    const hideTableLinesTableSelect = function(table, columnIndex, valueSearched) {
+        if (!table || table.nodeName != 'TABLE') {
+            return false;
+        }
+
+        let selectIndex = null;
+        if (Array.isArray(columnIndex)) {
+            indexes = [];
+            for(let item of columnIndex) {
+                indexes.push(`td:nth-child(${item})`);
+            }
+            selectIndex = indexes.join(', ');
+        } else {
+            selectIndex = `td:nth-child(${columnIndex})`;
+        }
+
+        const cells = table.querySelectorAll(`${selectIndex}`);
+
+        let isShowingOptGroups = [];
+        for (let cell of cells){
+            cell.parentElement.classList.remove('d-none');
+            if (valueSearched == '<-- show all -->') {
+                // Just reset cells and dont filter;
+                continue;
+            }
+
+            if (cell.parentElement.getAttribute('type') == 'group') {
+                isShowingOptGroups.push(cell.parentElement.getAttribute('value'));
+            }
+
+            let optGroupNumber = cell.parentElement.getAttribute('parentGroup') ?? null;
+            if (cell.textContent.trim().toLowerCase().includes(valueSearched.trim().toLowerCase()) ||
+                cell.parentElement.getAttribute('tokensearch')?.toLowerCase().includes(valueSearched.trim().toLowerCase())
+                ) {
+                cell.parentElement.classList.remove('d-none');
+
+                if (cell.parentElement.previousElementSibling &&
+                    cell.parentElement.previousElementSibling.tagName == "HR"){
+                    cell.parentElement.previousElementSibling.classList.remove('d-none');
+                }
+
+                if (cell && optGroupNumber) {
+                    if (document.getElementById(`st_op_${optGroupNumber}`)?.classList.contains('d-none')) {
+                        document.getElementById(`st_op_${optGroupNumber}`)?.classList.remove('d-none');
+                    }
+                }
+
+            } else {
+                cell.parentElement.classList.add('d-none');
+
+                if (cell.parentElement.previousElementSibling &&
+                    cell.parentElement.previousElementSibling.tagName == "HR"){
+                    cell.parentElement.previousElementSibling.classList.add('d-none');
+                }
+            }
+        };
     }
     
     const loadItemsAsCheckedOnTable = function(table, arrayCheckedItensIds) {
@@ -517,7 +667,7 @@ function tableSelect(table, useInternalFuncions, acceptMultiple, maxSelectedOpti
         }
 
         let selectedItensArray = [];
-        for (let option of document.querySelectorAll('.table_select_opt')){
+        for (let option of document.querySelectorAll('.table_select_opt[type="opt"]')){
             option.setAttribute('checked', false);
             for (let item of arrayCheckedItensIds) {
                 if (option.getAttribute('value') == item && !selectedItensArray.includes(option.getAttribute('value'))){
@@ -584,6 +734,7 @@ function tableSelect(table, useInternalFuncions, acceptMultiple, maxSelectedOpti
             acceptMultiple,
             maxSelectedOptions,
             onItemClickFunction,
+            onClickRegisterTime,
             table,
             useInternalFuncions,
             checkItemsValidations,
@@ -591,6 +742,7 @@ function tableSelect(table, useInternalFuncions, acceptMultiple, maxSelectedOpti
             enableSearchOnTable,
             getAllOptions,
             getCheckedItemsTable,
+            getJsonRelationalFamily,
             loadItemsAsCheckedOnTable,
             lockCheckItemOnTable,
             onSelectAOption,
