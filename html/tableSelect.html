@@ -6,20 +6,22 @@
     <title>Select Table</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../js/tableFuncions.js"></script>
+    <script src="./tableFuncions.js"></script>
 </head>
 <body>
     <div class="container-fluid p-5">
         <div class="row my-2">
             <div class="col-12">
                 <!-- SELECT INSIDE FORM -->
-                <div class="form-a border p-1">
+                <div class="form-a border p-3">
                     <div class="table-responsive overflow-y-scroll h-50" style="max-height: 200px;">
-                        <label for="inpSearchTableId" class="fw-bold mx-1">Filter:</label>
-                        <input type="search" id="inpSearchTableId" class="form-control" placeholder="Filter">
+                        <div class="search-holder fixed-top col-10 mx-auto mb-1 border p-1">
+                            <label for="inpSearchTableId" class="fw-bold mx-1">&nbsp;</label>
+                            <input type="search" id="inpSearchTableId" class="form-control" placeholder="Filter">
+                        </div>
                         <table  class="table table-bordered" aria-describedby="tableMain">
                             <thead>
-                                <th>OPTIONS</th>
+                                <th class="fw-bold text-secondary low-gray d-none">&nbsp;</th>
                             </thead>
                             <tbody>
                             </tbody>
@@ -35,22 +37,49 @@
     let exampleConfigs = {};
     exampleConfigs.table = document.getElementsByTagName('table')[0];
     exampleConfigs.useInternalFunctions = true;
-    exampleConfigs.acceptMultiple = false;
-    exampleConfigs.maxSelectOptions = 3;
+    exampleConfigs.acceptMultiple = true;
+    exampleConfigs.maxSelectOptions = 100;
     exampleConfigs.onItemClickFunction = function (item) {
-        console.log('Selected Item: ', item);
+        console.log('Clicked Item: ', item);
     }
 
+    exampleConfigs.onClickRegisterTime = 'before';
+
     const tableSelectControl = tableSelect(exampleConfigs.table, exampleConfigs.useInternalFunctions,
-        exampleConfigs.acceptMultiple, exampleConfigs.maxSelectOptions, exampleConfigs.onItemClickFunction);
+        exampleConfigs.acceptMultiple, exampleConfigs.maxSelectOptions, exampleConfigs.onItemClickFunction,
+        exampleConfigs.onClickRegisterTime);
 
     /** Creating a option using key_value transformation using createOptionsTable|renameJsonProps */
     tableSelectControl.createOptionsTable(tableSelectControl.table,
-        [{val: 1, name: '1 OPTION'},{val: 2, name: '2 OPTION'}, {val: 3, name: 'LOCK OPT'}, {val: 4, name: '4 OPTION'}],
-        [{val: 'value'}, {name: 'text'}] // wrong keys ('val' and 'name') | correct keys ('value' and 'text');
+        [
+        // COLOR
+        {val: 1, type: 'group', name: 'COLOR', maxSelectOptions: '3' , searchGroup :'COLOR'},
+        {val: 2, type: 'opt', name: 'BLACK', parent : '1', searchGroup :'COLOR'},
+        {val: 3, type: 'opt', name: 'MAGENTA (LOCKED OPTION)'},
+        {val: 4, type: 'opt', name: 'RED', parent : '1', searchGroup :'COLOR'},
+        {val: 5, type: 'opt', name: 'BLUE', parent : '1', searchGroup :'COLOR'},
+        {val: 6, type: 'opt', name: 'ORANGE', parent : '1', searchGroup :'COLOR'},
+        {val: 7, type: 'opt', name: 'YELLOW', parent : '1', searchGroup :'COLOR'},
+        // SIZE
+        {val: 8, type: 'group', name: 'SIZE', maxSelectOptions: '2', searchGroup :'SIZE, WIDTH, HEIGHT'},
+        {val: 9, type: 'opt', name: 'LOW',  parent : '8', searchGroup :'SIZE, WIDTH, HEIGHT'},
+        {val: 10, type: 'opt', name: 'MEDIUM',  parent : '8', searchGroup :'SIZE, WIDTH, HEIGHT'},
+        {val: 11, type: 'opt', name: 'BIG', parent : '8', searchGroup :'SIZE, WIDTH, HEIGHT'} ,
+        {val: 12, type: 'opt', name: 'XX BIG', parent : '8', searchGroup :'SIZE, WIDTH, HEIGHT'},
+        // GROUP 1
+        {val: 13, type: 'group', name: 'GROUP 1', maxSelectOptions: '1'},
+        {val: 14, type: 'opt', name: 'LOW OPT 1',  parent : '13'},
+        // GROUP 2
+        {val: 15, type: 'group', name: 'GROUP 2', maxSelectOptions: '1'},
+        {val: 16, type: 'opt', name: 'LOW OPT 2',  parent : '15'}
+        ],
+        [{val: 'value'}, {name: 'text'}, {type : 'type'}, {parent : 'parent'} , {maxSelectOptions : 'maxSelectOptions'},
+         {searchGroup : 'searchGroup'}
+        ]
+         // wrong keys ('val' and 'name') | correct keys ('value' and 'text'), using function to rename keys;
     );
     
-    tableSelectControl.loadItemsAsCheckedOnTable(tableSelectControl.table, [1, 4]);
+    tableSelectControl.loadItemsAsCheckedOnTable(tableSelectControl.table, [2, 4]);
 
     /** Locking a option */
     tableSelectControl.lockCheckItemOnTable(tableSelectControl.getAllOptions()[2]);
