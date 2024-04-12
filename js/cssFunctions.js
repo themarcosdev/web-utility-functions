@@ -43,7 +43,8 @@
       }
 
       /**
-        exportCSSElementToJson(document.getElementsByTagName('style')[0]);
+        @example: exportCSSElementToJson(document.getElementsByTagName('style')[0]);
+        @example: exportCSSElementToJson(document.body) // on bootstrap cdn page example;
       */
       function exportCSSElementToJson(styleElement) {
           const cssText = styleElement.textContent;
