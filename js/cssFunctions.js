@@ -51,19 +51,19 @@
       
           const cssJson = [];
           
-          rules.forEach(rule => {
+          rules?.forEach(rule => {
               if (rule.trim().length === 0) return;
               
-              const parts = rule.split("{");
-              const itemQuery = parts[0].trim();
-              const props = parts[1].split(";");
+              const parts = rule?.split("{");
+              const itemQuery = parts[0]?.trim();
+              const props = parts[1]?.split(";");
       
-              props.forEach(prop => {
+              props?.forEach(prop => {
                   if (prop.trim().length === 0) return;
       
-                  const propParts = prop.split(":");
-                  const property = propParts[0].trim();
-                  const value = propParts[1].trim();
+                  const propParts = prop?.split(":");
+                  const property = propParts[0]?.trim();
+                  const value = propParts[1]?.trim();
                   
                   cssJson.push({
                       styleCssOrigin : styleElement,
