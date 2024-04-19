@@ -45,8 +45,9 @@
       /**
         @example: exportCSSElementToJson(document.getElementsByTagName('style')[0]);
         @example: exportCSSElementToJson(document.body) // on bootstrap cdn page example;
+        @example: exportCSSElementToJson(document.getElementsByTagName('style')[0], ['body', '.my-class']);
       */
-      function exportCSSElementToJson(styleElement) {
+      window.exportCSSElementToJson = function (styleElement, optionalItemsQueryOnly = []) {
           const cssText = styleElement.textContent;
           const rules = cssText.split("}");
       
@@ -66,12 +67,23 @@
                   const property = propParts[0]?.trim();
                   const value = propParts[1]?.trim();
                   
-                  cssJson.push({
-                      styleCssOrigin : styleElement,
-                      itemQuery,
-                      prop: property,
-                      value
-                  });
+                  if (optionalItemsQueryOnly.length == 0) {
+                      cssJson.push({
+                          styleCssOrigin : styleElement,
+                          itemQuery,
+                          prop: property,
+                          value
+                      });
+                  } else {
+                      if (optionalItemsQueryOnly.includes(itemQuery)){
+                          cssJson.push({
+                              styleCssOrigin : styleElement,
+                              itemQuery,
+                              prop: property,
+                              value
+                          });
+                      }
+                  }
               });
           });
       
