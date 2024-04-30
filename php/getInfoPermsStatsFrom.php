@@ -1,3 +1,4 @@
+<?php
 /**
  * @example: echo getInfoPermsStatsFrom($arquivo, true, 'America/Sao_Paulo');
  */
