@@ -22,3 +22,5 @@ String.prototype.isBiggerThan = function(size) {
     
     return false;
 };
+
+console.log('working')
